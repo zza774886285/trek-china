@@ -66,8 +66,6 @@ export function collectManagedRoutes(app: INestApplication): ManagedRouteEntry[]
  */
 export const MANAGED_ROUTE_ALLOW_LIST: string[] = [
   'AdminController.rotateJwtSecret',
-  'AdminOidcController.get',
-  'AdminOidcController.update',
   'AuthController.createMcpToken',
   'AuthController.validateKeys',
   'BackupController.restore',
@@ -76,9 +74,6 @@ export const MANAGED_ROUTE_ALLOW_LIST: string[] = [
   'LlmLocalController.models',
   'LlmLocalController.pull',
   'NotificationsController.testSmtp',
-  'PluginsController.link',
-  'PluginsController.reload',
-  'PluginsController.upload',
   'StorageAdminController.backfillCancel',
   'StorageAdminController.backfillStart',
   'StorageAdminController.get',
