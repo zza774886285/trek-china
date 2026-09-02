@@ -127,17 +127,9 @@ export const PUBLIC_ROUTE_ALLOW_LIST: string[] = [
   'McpTransportController.delete',
   'McpTransportController.get',
   'McpTransportController.post',
-  'OauthPublicController.revoke',
-  'OauthPublicController.token',
-  'OauthPublicController.userinfo',
   // The OIDC handshake, before a TREK session exists.
-  'OidcController.callback',
-  'OidcController.exchange',
-  'OidcController.login',
   // Serves the sandbox document; the RPC inside it is authenticated.
-  'PluginFrameController.serve',
   // Auth is per plugin route (route.auth in the manifest), asserted in the handler.
-  'PluginsProxyController.proxy',
   // Share-token validated.
   'SharedController.placePhotoBytes',
   'SharedController.read',
