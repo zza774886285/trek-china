@@ -35,7 +35,7 @@ export const DEFAULT_SETTINGS: Settings = {
   dark_mode: false,
   // Empty = no personal display currency, so Costs falls back to the trip's own.
   default_currency: '',
-  language: localStorage.getItem('app_language') || 'en',
+  language: localStorage.getItem('app_language') || 'zh',
   temperature_unit: 'celsius',
   distance_unit: 'metric',
   time_format: '24h',
