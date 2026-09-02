@@ -1,0 +1,7 @@
+FROM mauriceboe/trek:latest
+COPY --chown=node:node server/dist/ /app/server/dist/
+COPY --chown=node:node server/package.json /app/server/package.json
+COPY --chown=node:node shared/dist/ /app/shared/dist/
+COPY --chown=node:node client/dist/ /app/server/public
+ENV TZ=Asia/Shanghai
+EXPOSE 3000
