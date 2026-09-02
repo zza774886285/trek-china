@@ -157,7 +157,7 @@ function JourneyMapAmap(
       if (!alive || !containerRef.current || !window.AMap) return
       const AMap = window.AMap
       // 默认中心点
-      const [cLng, cLat] = gcjPosition(DEFAULT_MAP_CENTER[1], DEFAULT_MAP_CENTER[0])
+      const [cLng, cLat] = wgs84ToGcj02(DEFAULT_MAP_CENTER[1], DEFAULT_MAP_CENTER[0])
       mapRef.current = new AMap.Map(containerRef.current, {
         zoom: DEFAULT_MAP_ZOOM,
         center: [cLng, cLat],
