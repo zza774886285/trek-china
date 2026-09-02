@@ -198,7 +198,8 @@ export const MapViewAmap = memo(function MapViewAmap({
     const selected = allPlaces.find(p => p.id === selectedPlaceId)
     if (selected?.lat != null && selected?.lng != null) {
       const [gcjLng, gcjLat] = gcjPosition(selected.lng, selected.lat)
-      mapRef.current.setCenter(new (window.AMap!.LngLat)(gcjLng, gcjLat))
+      const map = mapRef.current
+      map.setZoomAndCenter(16, new (window.AMap!.LngLat)(gcjLng, gcjLat))
     }
     prevSelectedRef.current = selectedPlaceId
   }, [selectedPlaceId, places, dayPlaces])
