@@ -10,7 +10,7 @@ import { EphemeralTokenService } from './ephemeral-token.service';
  * graphs reach for, so a dependency added there lands in all of them.
  *
  * Same shape and same reason as MailerModule, which broke
- * AuthModule <-> NotificationsModule, and .
+ * AuthModule <-> NotificationsModule, and.
  */
 @Module({
   providers: [EphemeralTokenService],

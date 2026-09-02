@@ -8,7 +8,7 @@ import { SchedulingModule } from '../scheduling/scheduling.module';
 import { SettingsModule } from '../settings/settings.module';
 import { AuditModule } from '../audit/audit.module';
 import { AddonsModule } from '../addons/addons.module';
-// AuthModule exports PasskeyService for the admin passkey-reset endpoint.
+// AuthModule exports for the admin passkey-reset endpoint.
 import { AuthModule } from '../auth/auth.module';
 // NotificationsModule exports NotificationsService for the dev test-notification send.
 import { NotificationsModule } from '../notifications/notifications.module';
@@ -22,6 +22,7 @@ import { PermissionsModule } from '../permissions/permissions.module';
 import { AppConfigModule } from '../app-config/app-config.module';
 
 @Module({
+  imports: [AppConfigModule, SettingsModule, AuditModule, AddonsModule, AuthModule, NotificationsModule, PackingModule, PermissionsModule, TokensModule, SchedulingModule],
   controllers: [AdminController],
   providers: [AdminService, VersionCheckJob, DemoResetJob],
 })

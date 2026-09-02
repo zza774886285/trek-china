@@ -14,6 +14,7 @@ import { AuditModule } from '../audit/audit.module';
  * bearer verification, session create/resume, rate limiting, SSE keep-alive.
  */
 @Module({
+  imports: [AuthModule, TokensModule, AddonsModule, AuditModule],
   controllers: [McpTransportController],
   providers: [McpTransportService],
 })

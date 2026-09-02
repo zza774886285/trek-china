@@ -40,7 +40,7 @@ import { AllowedFileTypesModule } from '../files/allowed-file-types.module';
  * imports it and UserCleanupService injects BudgetService (which retired
  * budget.bridge). AuthService is
  * exported for the in-container consumers (the domain *.mcp.ts demo guards,
- * OidcService, PasskeyEnabledGuard); PasskeyService for AdminService's passkey
+ * OidcService, PasskeyEnabledGuard); for AdminService's passkey
  * reset; UserCleanupService for the two account-deletion paths (AdminService)
  * and the guest deletion in TripsService; everything outside the container goes
  * through auth.bridge.ts.

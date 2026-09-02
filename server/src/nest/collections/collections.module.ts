@@ -14,7 +14,7 @@ import { buildStorageUploadOptions } from '../storage/storage-upload.factory';
 import { MAX_COVER_SIZE } from './collections.controller';
 
 /** Collections domain (saved-places library). Registered in AppModule.
- *  Exports CollectionsService for in-container consumers (PluginsModule's
+ *  Exports CollectionsService for in-container consumers ('s
  *  RPC host deps factory). */
 @Module({
   imports: [
