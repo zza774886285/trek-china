@@ -192,9 +192,7 @@ export class TripsMcp {
   })
   async searchCoverImages({ query }: { query: string }, ctx: McpContext) {
     try {
-      const result = await this.trips.searchCoverImages(query, ctx.userId);
-      if ('error' in result) return errorResult(result.error);
-      return ok({ photos: result.photos });
+      return ok({ photos: [] }); // unsplash removed
     } catch (err) {
       console.error('Unsplash cover image error:', err);
       return errorResult('Error searching for cover images');

@@ -65,8 +65,7 @@ const addDays = (d: Date, n: number) => { const r = new Date(d); r.setDate(r.get
 export class TripsController {
   // calendar last: the hand-wired construction sites in the tests stay positional,
   // so a new dependency does not touch the ones that never reach the ICS route.
-  constructor(private readonly trips: TripsService, private readonly audit: AuditService, private readonly env: RuntimeEnvService,
-  ) {}
+  constructor(private readonly trips: TripsService, private readonly audit: AuditService, private readonly env: RuntimeEnvService, private readonly calendar: CalendarService, private readonly readModel: TripReadModelService, private readonly storage: StorageService) {}
 
   /**
    * Where "open TREK straight in my trip" lands. Declared above @Get(':id') —
@@ -83,11 +82,7 @@ export class TripsController {
   @Get('cover-images/search')
   async coverImages(@CurrentUser() user: User, @Query('query') query?: string) {
     try {
-      const result = await this.trips.searchCoverImages(query || '', user.id);
-      if ('error' in result) {
-        throw new HttpException({ error: result.error }, result.status);
-      }
-      return { photos: result.photos };
+      return { photos: [] }; // unsplash removed
     } catch (err: unknown) {
       if (err instanceof HttpException) throw err;
       console.error('Unsplash cover image error:', err);
@@ -146,15 +141,7 @@ export class TripsController {
     }
     // A chosen Unsplash cover arrives as an images.unsplash.com hot-link; download
     // it into uploads/covers so the cover survives offline + CDN link-rot (#1277).
-    if (false && false) { // unsplash block removed
-      try {
-        // unsplash cover download removed
-        body.cover_image = `/uploads/covers/${filename}`;
-      } catch (e) {
-        console.error('Unsplash cover download failed:', e);
-        throw new HttpException({ error: 'Could not save the selected cover image' }, 502);
-      }
-    }
+
     const oldCover = body.cover_image !== undefined
       ? (this.trips.getRaw(id) as { cover_image: string | null } | undefined)?.cover_image
       : undefined;

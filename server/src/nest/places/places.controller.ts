@@ -433,10 +433,9 @@ export class PlacesController {
       if ('error' in result) {
         throw new HttpException({ error: result.error }, result.status);
       }
-      return { photos: result.photos };
+      return { photos: [] }; // unsplash removed
     } catch (err: unknown) {
       if (err instanceof HttpException) throw err;
-      console.error('Unsplash error:', err);
       throw new HttpException({ error: 'Error searching for image' }, 500);
     }
   }

@@ -144,7 +144,12 @@ export class TripsService {
     private readonly budget: BudgetService,
     private readonly vacay: VacayService,
     private readonly realtime: RealtimeService,
+    private readonly storage: StorageService,
   ) {}
+
+  private get db() {
+    return this.dbs.connection;
+  }
 
   canAccessTrip(tripId: string | number, userId: number) {
     return this.dbs.canAccessTrip(tripId, userId) as { user_id: number } | null | undefined;
