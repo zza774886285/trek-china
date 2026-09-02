@@ -72,17 +72,7 @@ export class ReservationImportController {
    * ordering every other trip-scoped controller already has, and no case pinned
    * the other way round for this route.
    */
-  @Post('airtrail')
-  @RequireAddon(ADDON_IDS.AIRTRAIL, 'AirTrail')
-  @RequirePermission('reservation_edit')
-  async importAirtrail(
-    @CurrentUser() user: User,
-    @Param('tripId') tripId: string,
-    @Body() body: Record<string, any>,
-    @Headers('x-socket-id') socketId?: string,
-  ): Promise<Record<string, unknown>> {
-    throw new HttpException('AirTrail import removed', 501);
-  }
+
 
 
 
