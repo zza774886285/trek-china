@@ -21,8 +21,6 @@ import { RequireAddon } from '../addons/require-addon.decorator';
 import { ADDON_IDS } from '../../addons';
 import { BookingImportService } from '../booking-import/booking-import.service';
 import { ImportJobsService } from '../booking-import/import-jobs.service';
-import { AirtrailImportService } from '../integrations/airtrail-import.service';
-import { AirtrailImportDto } from '../integrations/airtrail.dto';
 import type { AirtrailImportResult } from '@trek/shared';
 import { bookingImportModeSchema } from '@trek/shared';
 import type { BookingImportPreviewItem, BookingImportPreviewResponse, BookingImportConfirmResponse, BookingImportMode } from '@trek/shared';
@@ -61,7 +59,6 @@ export class ReservationImportController {
   constructor(
     private readonly bookingImport: BookingImportService,
     private readonly importJobs: ImportJobsService,
-    private readonly airtrailImport: AirtrailImportService,
   ) {}
 
   /**
@@ -81,14 +78,10 @@ export class ReservationImportController {
   async importAirtrail(
     @CurrentUser() user: User,
     @Param('tripId') tripId: string,
-    @Body() body: AirtrailImportDto,
+    @Body() body: Record<string, any>,
     @Headers('x-socket-id') socketId?: string,
-  ): Promise<AirtrailImportResult> {
-    try {
-      return await this.airtrailImport.importAirtrailFlights(tripId, user.id, body.flightIds, socketId, body.connections ?? []);
-    } catch (err: any) {
-      throw new HttpException({ error: err?.message || 'AirTrail import failed' }, err?.status === 400 ? 400 : 502);
-    }
+  ): Promise<Record<string, unknown>> {
+    throw new HttpException('AirTrail import removed', 501);
   }
 
 

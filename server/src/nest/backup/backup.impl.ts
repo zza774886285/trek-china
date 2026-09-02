@@ -8,9 +8,6 @@ import Database from 'better-sqlite3';
 import { db, closeDb, reinitialize } from '../../db/database';
 import { VALID_INTERVALS } from './auto-backup.settings';
 import { invalidatePermissionsCache } from '../permissions/permissions-cache';
-import { pluginsCodeRoot, pluginsDataRoot } from '../plugins/paths';
-import { stageExtractedPluginTrees, applyStagedRestoreNow } from '../plugins/plugin-backup';
-import { snapshotAllPluginDataDbs } from '../plugins/host/plugin-data.service';
 import type { Response } from 'express';
 import type { StorageService } from '../storage/storage.service';
 import { StorageInvalidKeyError } from '../storage/storage.types';
@@ -172,7 +169,6 @@ export async function createBackup(storage: StorageService, prefix: 'backup' | '
   // the other's staging copy mid-archive.
   const spoolDir = storage.spoolDirFor('backups');
   const zipSpool = path.join(spoolDir, `zip-build-${prefix}-${timestamp}`);
-  const pdataSnap = path.join(spoolDir, `plugins-snap-${prefix}-${timestamp}`);
   const dbSnap = path.join(spoolDir, `travel-snap-${prefix}-${timestamp}.db`);
   // Per-backup staging for uploads with no local path (a remote/S3 primary, or
   // a local path that vanished between listing and archiving — see
@@ -261,36 +257,7 @@ export async function createBackup(storage: StorageService, prefix: 'backup' | '
 
       for (const entry of uploadEntries) archive.file(entry.absPath, { name: entry.name });
 
-      // Plugin data — each plugin's own SQLite file and any blobs. This is the ONLY
-      // copy of the user data a plugin holds, so it belongs in the backup. Checkpoint
-      // every open handle first (the host keeps them open in WAL mode) so the archived
-      // .db files are complete snapshots and not missing recent commits stranded in a
-      // -wal sidecar — the same treatment travel.db gets above.
-      const pdata = pluginsDataRoot();
-      if (fs.existsSync(pdata)) {
-        // Archive a consistent point-in-time snapshot, not the live files: the archiver
-        // reads lazily while streaming, so a plugin writing during the backup (an auto-
-        // checkpoint landing mid-read) would otherwise put a torn .db + out-of-sync -wal
-        // into the zip — the plugin's ONLY data copy, silently corrupt. This VACUUM-INTOs
-        // each open db and drops the sidecars; the snap dir is removed in the finally.
-        snapshotAllPluginDataDbs(pdataSnap);
-        archive.directory(pdataSnap, 'plugins-data');
-      }
-      // Plugin code — so a restore is self-contained (the `plugins` rows reference it).
-      // Dev-links (a plugin dir symlinked/junctioned to an author's source) are skipped
-      // by realpath: we never bundle a linked source tree from outside the code root.
-      const pcode = pluginsCodeRoot();
-      if (fs.existsSync(pcode)) {
-        const realRoot = fs.realpathSync(pcode);
-        for (const entry of fs.readdirSync(pcode)) {
-          const dir = path.join(pcode, entry);
-          let real: string;
-          try { real = fs.realpathSync(dir); } catch { continue; }
-          if (!real.startsWith(realRoot + path.sep)) continue; // dev-link points outside → skip
-          try { if (!fs.statSync(dir).isDirectory()) continue; } catch { continue; }
-          archive.directory(dir, `plugins-code/${entry}`);
-        }
-      }
+      // Plugin data/code removed — plugins directory was deleted.
 
       archive.finalize();
     });
@@ -315,7 +282,6 @@ export async function createBackup(storage: StorageService, prefix: 'backup' | '
     // the build promise resolves on the output stream's 'close', so the
     // snapshots are no longer being read.)
     fs.rmSync(zipSpool, { force: true });
-    fs.rmSync(pdataSnap, { recursive: true, force: true });
     fs.rmSync(dbSnap, { force: true });
     fs.rmSync(stagingDir, { recursive: true, force: true });
   }
@@ -541,7 +507,6 @@ export async function restoreFromZip(storage: StorageService, zipPath: string): 
     // must not cost the archive's plugin data: extractDir is unlinked right below, and
     // an un-staged tree there would be gone for good with no recovery path.
     try {
-      stageExtractedPluginTrees(extractDir);
       // Quiesce regardless of whether trees were staged: the restored travel.db carries
       // a different `plugins` table, so any plugin still running with its pre-restore
       // identity/grants is now a ghost — invisible in the restored UI, unstoppable short
@@ -549,9 +514,9 @@ export async function restoreFromZip(storage: StorageService, zipPath: string): 
       // it also performs is a no-op when nothing was staged (e.g. an older archive). It
       // degrades gracefully when the DB isn't reopened, same as any other best-effort
       // failure here.
-      await applyStagedRestoreNow();
+      // applyStagedRestoreNow removed
     } catch (e) {
-      console.error('Restore: staging plugin trees failed:', e);
+      console.error('Restore failed:', e);
     }
 
     fs.rmSync(extractDir, { recursive: true, force: true });

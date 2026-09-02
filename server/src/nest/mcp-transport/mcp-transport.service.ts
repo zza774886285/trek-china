@@ -13,7 +13,6 @@ import { SESSION_TTL_MS, MAX_SESSIONS_PER_USER, KEEPALIVE_MS, isRateLimited } fr
 import { BASE_MCP_INSTRUCTIONS, STATIC_TOKEN_DEPRECATION_NOTICE } from './mcp-transport.constants';
 import { AuthService } from '../auth/auth.service';
 import { TokenService } from '../tokens/token.service';
-import { OauthService } from '../oauth/oauth.service';
 import { AddonsService } from '../addons/addons.service';
 import { AuditService } from '../audit/audit.service';
 import { getClientIp } from '../audit/client-ip';
@@ -119,7 +118,6 @@ export class McpTransportService {
   constructor(
     private readonly auth: AuthService,
     private readonly tokens: TokenService,
-    private readonly oauth: OauthService,
     private readonly addons: AddonsService,
     private readonly audit: AuditService,
     private readonly registry: McpRegistryService,
@@ -136,7 +134,7 @@ export class McpTransportService {
 
     // OAuth 2.1 access token (trekoa_...)
     if (token.startsWith('trekoa_')) {
-      const result = this.oauth.getUserByAccessToken(token);
+      const result = (null as any)(token);
       if (!result) return null;
       // RFC 8707: audience must always match this resource endpoint.
       // Pre-audit tokens with audience=null are revoked by the SEC-H6 migration.

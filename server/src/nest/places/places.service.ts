@@ -21,7 +21,6 @@ import {
 } from './kml-import.helpers';
 import { buildGpx, gpxFilename } from './gpx-export.helpers';
 import type { GpxExportDay, GpxExportOptions, GpxExportPlace } from './gpx-export.helpers';
-import { UnsplashService } from '../unsplash/unsplash.service';
 import { PlacePhotoCacheService } from '../place-photos/place-photo-cache.service';
 import { type UpdateConflict, isUpdateConflict } from '../common/conflictResult';
 import { reclaimPlaceImage } from './place-image';
@@ -110,7 +109,6 @@ export class PlacesService {
     private readonly realtime: RealtimeService,
     private readonly maps: MapsService,
     private readonly queryHelpers: QueryHelpersService,
-    private readonly unsplash: UnsplashService,
     private readonly photoCache: PlacePhotoCacheService,
     private readonly journey: JourneyDomainService,
     private readonly storage: StorageService,
@@ -1359,7 +1357,7 @@ export class PlacesService {
     const place = this.dbs.get<Place>('SELECT * FROM places WHERE id = ? AND trip_id = ?', placeId, tripId);
     if (!place) return { error: 'Place not found', status: 404 };
 
-    return this.unsplash.searchUnsplashPhotos(place.name + (place.address ? ' ' + place.address : ''), 5, this.unsplash.getUnsplashKey(userId));
+    return []; // unsplash removed
   }
 
   // -------------------------------------------------------------------------

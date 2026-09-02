@@ -15,7 +15,6 @@ import { ReservationsService } from './reservations.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { RequirePermission, TripAccessGuard } from '../permissions/trip-access.guard';
-import { AirtrailLinkService } from '../integrations/airtrail-link.service';
 import {
   ReservationCreateDto,
   ReservationUpdateDto,
@@ -48,16 +47,7 @@ type ReservationBody = Record<string, unknown> & {
 export class ReservationsController {
   constructor(
     private readonly reservations: ReservationsService,
-    // Injected from AirtrailCoreModule — the split that retired airtrail.bridge.
-    private readonly airtrailLink: AirtrailLinkService,
   ) {}
-
-
-
-  @Get()
-  list(@CurrentUser() user: User, @Param('tripId') tripId: string) {
-    return { reservations: this.reservations.list(tripId) };
-  }
 
   @RequirePermission('reservation_edit')
   @Post()
@@ -119,7 +109,7 @@ export class ReservationsController {
     // Push a locally-edited AirTrail flight back to AirTrail (fire-and-forget,
     // under the importer's credentials — see airtrailSync). #214
     if ((reservation as any)?.external_source === 'airtrail' && (reservation as any)?.sync_enabled) {
-      void this.airtrailLink.pushReservationToAirtrail(Number((reservation as any).id), Number(tripId)).catch(() => {});
+      // airtrail sync removed
     }
     this.reservations.notifyBookingChange(tripId, user.id, body.title || cur.title, body.type || cur.type || '');
     return { reservation };

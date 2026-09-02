@@ -28,7 +28,6 @@ import { User } from '../../types';
 import { DEMO_EMAIL_PRIMARY, DEMO_PASS, isDemoEmail } from '../common/demo';
 import { avatarUrl } from '../common/avatarUrl';
 import { TripMembershipService } from '../trip-membership/trip-membership.service';
-import { WebauthnConfigService } from './webauthn-config.service';
 import { setAuthCookie, clearAuthCookie } from '../common/cookie';
 import { MailerService } from '../notifications/mailer/mailer.service';
 import { AllowedFileTypesService } from '../files/allowed-file-types.service';
@@ -124,7 +123,6 @@ export class AuthService {
     private readonly db: DatabaseService,
     private readonly permissions: PermissionsService,
     private readonly membership: TripMembershipService,
-    private readonly webauthn: WebauthnConfigService,
     private readonly userCleanup: UserCleanupService,
     private readonly mailer: MailerService,
     private readonly tokens: EphemeralTokenService,
@@ -281,7 +279,7 @@ export class AuthService {
       // are true. `passkey_configured` stays a pure boolean — it never leaks the
       // resolved RP ID / origin / APP_URL on this unauthenticated endpoint.
       passkey_login: toggles.passkey_login,
-      passkey_configured: this.webauthn.isConfigured(),
+      passkey_configured: false,
       env_override_oidc_only: readEnv().oidc.only,
       has_users: userCount > 0,
       setup_complete: setupComplete,

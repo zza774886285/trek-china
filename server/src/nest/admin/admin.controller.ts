@@ -96,9 +96,9 @@ export class AdminController {
 
   @Delete('users/:id/passkeys')
   resetUserPasskeys(@CurrentUser() user: User, @Param('id') id: string, @Req() req: Request) {
-    const result = ok(this.admin.resetUserPasskeys(id));
-    this.audit.writeAudit({ userId: user.id, action: 'admin.user_passkeys_reset', resource: String(id), ip: getClientIp(req), details: { targetUser: result.email, deleted: result.deleted } });
-    return { success: true, deleted: result.deleted };
+    this.admin.resetUserPasskeys(id);
+    this.audit.writeAudit({ userId: user.id, action: 'admin.user_passkeys_reset', resource: String(id), ip: getClientIp(req) });
+    return { success: true };
   }
 
   @Delete('users/:id/mfa')
@@ -252,17 +252,6 @@ export class AdminController {
     // actually change — an enabled-flip of an MCP-relevant addon. Config-only
     // saves and photo-provider toggles used to kill every session (#1414).
     if (result.mcpAffected) this.admin.invalidateMcpSessions();
-    // Disabling an addon cascades to plugins that require it: stop them (and any
-    // plugin that transitively depends on them) so a plugin never runs against a
-    // disabled addon (#plugins dependencies).
-    if (result.addon && result.addon.enabled === false && (body as { enabled?: boolean })?.enabled === false) {
-      const stopped = await this.pluginRuntime.deactivateForDisabledAddon(id);
-      // A stopped plugin takes its MCP tools off the surface, and the addon that
-      // cascaded here is not necessarily an MCP-relevant one, so mcpAffected
-      // above does not cover this. Still conditional on something actually
-      // stopping, which keeps the #1414 rule that a no-op save kills nothing.
-      if (stopped.length && !result.mcpAffected) this.admin.invalidateMcpSessions();
-    }
     return { addon: result.addon };
   }
 
@@ -277,15 +266,6 @@ export class AdminController {
     return { success: true };
   }
 
-  @Get('oauth-sessions')
-  listOAuthSessions() { return { sessions: this.oauth.listAllOAuthSessions() }; }
-
-  @Delete('oauth-sessions/:id')
-  revokeOAuthSession(@CurrentUser() user: User, @Param('id') id: string, @Req() req: Request) {
-    ok(this.oauth.adminRevokeOAuthSession(id));
-    this.audit.writeAudit({ userId: user.id, action: 'admin.oauth_session_revoke', resource: String(id), ip: getClientIp(req) });
-    return { success: true };
-  }
 
   // ── JWT rotation ──
   @ManagedForbidden('rotating the secret signs every user out and fixes nothing the admin can reach')

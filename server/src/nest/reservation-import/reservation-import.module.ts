@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ReservationImportController } from './reservation-import.controller';
 import { ReservationImportMcp } from './reservation-import.mcp';
 import { BookingImportModule } from '../booking-import/booking-import.module';
-import { AirtrailModule } from '../integrations/airtrail.module';
 import { AddonsModule } from '../addons/addons.module';
 import { PermissionsModule } from '../permissions/permissions.module';
 import { AuthModule } from '../auth/auth.module';
@@ -21,7 +20,7 @@ import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
  * permission/broadcast guards; neither is @Global, so both are named here.
  */
 @Module({
-  imports: [BookingImportModule, AirtrailModule, AddonsModule, PermissionsModule, AuthModule, McpSharedModule],
+  imports: [BookingImportModule, AddonsModule, PermissionsModule, AuthModule, McpSharedModule],
   controllers: [ReservationImportController],
   providers: [ReservationImportMcp],
 })

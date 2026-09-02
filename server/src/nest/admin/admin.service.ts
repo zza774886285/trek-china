@@ -24,7 +24,6 @@ import { UserCleanupService } from '../auth/user-cleanup.service';
 import { DatabaseService } from '../database/database.service';
 import { AddonsService } from '../addons/addons.service';
 import { RealtimeService } from '../realtime/realtime.service';
-import { PasskeyService } from '../auth/passkey.service';
 import { AuthService } from '../auth/auth.service';
 import { PermissionsService } from '../permissions/permissions.service';
 import { PERMISSION_ACTIONS } from '../permissions/permissions.service';
@@ -70,7 +69,6 @@ export class AdminService {
   constructor(
     private readonly db: DatabaseService,
     private readonly addons: AddonsService,
-    private readonly passkeys: PasskeyService,
     private readonly auth: AuthService,
     private readonly permissions: PermissionsService,
     private readonly notifications: NotificationsService,
@@ -261,7 +259,7 @@ export class AdminService {
     return { email: userToDel.email };
   }
 
-  resetUserPasskeys(id: string) { return this.passkeys.adminResetPasskeys(Number(id)); }
+  resetUserPasskeys(_id: string) { /* passkeys removed */ }
 
   /**
    * Clear another account's TOTP so its owner can enrol again.

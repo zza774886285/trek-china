@@ -9,7 +9,6 @@ import { DaysService } from '../days/days.service';
 import { BudgetService } from '../budget/budget.service';
 import { ReservationsService } from '../reservations/reservations.service';
 import { VacayService } from '../vacay/vacay.service';
-import { UnsplashService } from '../unsplash/unsplash.service';
 import { StorageService } from '../storage/storage.service';
 import { NotFoundError, ValidationError } from '../common/domain-errors';
 
@@ -145,13 +144,7 @@ export class TripsService {
     private readonly budget: BudgetService,
     private readonly vacay: VacayService,
     private readonly realtime: RealtimeService,
-    private readonly unsplash: UnsplashService,
-    private readonly storage: StorageService,
   ) {}
-
-  private get db() {
-    return this.dbs.connection;
-  }
 
   canAccessTrip(tripId: string | number, userId: number) {
     return this.dbs.canAccessTrip(tripId, userId) as { user_id: number } | null | undefined;
@@ -375,7 +368,7 @@ export class TripsService {
   }
 
   searchCoverImages(query: string, userId: number) {
-    return this.unsplash.searchUnsplashPhotos(query, 9, this.unsplash.getUnsplashKey(userId));
+    return []; // unsplash removed
   }
 
   getOwner(tripId: string | number): { user_id: number } | undefined {

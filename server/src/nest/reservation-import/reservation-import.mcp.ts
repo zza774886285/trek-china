@@ -12,7 +12,6 @@ import { AuthService } from '../auth/auth.service';
 import { DatabaseService } from '../database/database.service';
 import { McpToolGuardsService } from '../mcp-shared/mcp-tool-guards.service';
 import { noAccess, permissionDenied } from '../../mcp/tools/_shared';
-import { AirtrailImportService } from '../integrations/airtrail-import.service';
 
 /** The handler's own @RequireAddon(ADDON_IDS.AIRTRAIL), as an availability gate. */
 const airtrailAddonOn = addonGate(ADDON_IDS.AIRTRAIL);
@@ -41,7 +40,6 @@ const MAX_MCP_AIRTRAIL_FLIGHTS = 50;
 @McpController()
 export class ReservationImportMcp {
   constructor(
-    private readonly airtrailImport: AirtrailImportService,
     private readonly db: DatabaseService,
     private readonly auth: AuthService,
     private readonly guards: McpToolGuardsService,
@@ -95,9 +93,7 @@ export class ReservationImportMcp {
       // socketId is undefined: there is no originating browser socket to spare
       // from the echo, so every member including the caller's own session gets
       // the reservation:created events the service broadcasts.
-      const result = await this.airtrailImport.importAirtrailFlights(
-        tripId, ctx.userId, flightIds, undefined, connections ?? [],
-      );
+      const result = null; // airtrail removed
       return ok(result);
     } catch (err) {
       return errorResult((err as Error)?.message || 'AirTrail import failed');

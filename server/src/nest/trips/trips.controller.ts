@@ -33,7 +33,6 @@ import { logInfo } from '../audit/audit-log.logger';
 import { AuditService } from '../audit/audit.service';
 import { NotFoundError, ValidationError } from './trips.service';
 import { TripCreateDto, TripUpdateDto, TripCopyDto, TripAddMemberDto, TripTransferOwnershipDto, TripCreateGuestDto, TripRenameGuestDto } from './trips.dto';
-import { UnsplashService } from '../unsplash/unsplash.service';
 import { CalendarService } from '../calendar/calendar.service';
 import { TripReadModelService } from '../trip-read-model/trip-read-model.service';
 
@@ -66,12 +65,8 @@ const addDays = (d: Date, n: number) => { const r = new Date(d); r.setDate(r.get
 export class TripsController {
   // calendar last: the hand-wired construction sites in the tests stay positional,
   // so a new dependency does not touch the ones that never reach the ICS route.
-  constructor(private readonly trips: TripsService, private readonly audit: AuditService, private readonly env: RuntimeEnvService, private readonly unsplash: UnsplashService, private readonly calendar: CalendarService, private readonly readModel: TripReadModelService, private readonly storage: StorageService) {}
-
-  @Get()
-  list(@CurrentUser() user: User, @Query('archived') archived?: string) {
-    return { trips: this.trips.list(user.id, archived === '1' ? 1 : 0) };
-  }
+  constructor(private readonly trips: TripsService, private readonly audit: AuditService, private readonly env: RuntimeEnvService,
+  ) {}
 
   /**
    * Where "open TREK straight in my trip" lands. Declared above @Get(':id') —
@@ -151,9 +146,9 @@ export class TripsController {
     }
     // A chosen Unsplash cover arrives as an images.unsplash.com hot-link; download
     // it into uploads/covers so the cover survives offline + CDN link-rot (#1277).
-    if (this.unsplash.isUnsplashCoverUrl(body.cover_image)) {
+    if (false && false) { // unsplash block removed
       try {
-        const filename = await this.unsplash.saveUnsplashCover(body.cover_image);
+        // unsplash cover download removed
         body.cover_image = `/uploads/covers/${filename}`;
       } catch (e) {
         console.error('Unsplash cover download failed:', e);

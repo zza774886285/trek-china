@@ -3,14 +3,11 @@ import { Module } from '@nestjs/common';
 import { TokensModule } from '../tokens/tokens.module';
 import { AuthPublicController } from './auth-public.controller';
 import { AuthController } from './auth.controller';
-import { PasskeyController } from './passkey.controller';
 import { AuthService } from './auth.service';
 import { UserProfileService } from './user-profile.service';
 import { RegistrationInvitesService } from './registration-invites.service';
-import { PasskeyService } from './passkey.service';
 import { AuthMcp } from './auth.mcp';
 import { UserCleanupService } from './user-cleanup.service';
-import { WebauthnConfigService } from './webauthn-config.service';
 import { AppConfigModule } from '../app-config/app-config.module';
 import { BudgetModule } from '../budget/budget.module';
 import { AuditModule } from '../audit/audit.module';
@@ -63,8 +60,8 @@ import { AllowedFileTypesModule } from '../files/allowed-file-types.module';
     StorageModule,
     AllowedFileTypesModule,
     EphemeralTokenModule, RateLimitModule, AuditModule, PermissionsModule, TripMembershipModule, MailerModule, AppConfigModule, TokensModule, BudgetModule],
-  controllers: [AuthPublicController, AuthController, PasskeyController],
-  providers: [AuthService, UserProfileService, RegistrationInvitesService, PasskeyService, UserCleanupService, WebauthnConfigService, AuthMcp],
-  exports: [AuthService, RegistrationInvitesService, PasskeyService, UserCleanupService],
+  controllers: [AuthPublicController, AuthController],
+  providers: [AuthService, UserProfileService, RegistrationInvitesService, UserCleanupService, AuthMcp],
+  exports: [AuthService, RegistrationInvitesService, UserCleanupService],
 })
 export class AuthModule {}

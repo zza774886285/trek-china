@@ -5,7 +5,6 @@ import { DatabaseService } from '../database/database.service';
 // guard reads RuntimeEnvService + the users table now), which un-closed the
 // AuthModule -> BudgetModule cycle that used to force budget.bridge here.
 import { BudgetService } from '../budget/budget.service';
-import { pluginsDataRoot } from '../plugins/paths';
 
 /**
  * Account erasure — everything that has to happen around `DELETE FROM users`
@@ -50,17 +49,7 @@ export class UserCleanupService {
         try { perms = JSON.parse(r.permissions ?? '[]'); } catch { perms = []; }
         if (Array.isArray(perms) && perms.includes('hook:user-data')) insert.run(r.id, userId);
       }
-      // Also enqueue for plugins UNINSTALLED with their data retained (deleteData=false):
-      // their data dir still holds the user's rows and a same-id reinstall would re-adopt
-      // them. No permissions record survives uninstall, so we can't check hook:user-data —
-      // enqueue for every orphan data dir; the row sits inert (no FK) and drains only if
-      // that id is reinstalled + active (erasure delivery is a duty, not grant-gated).
-      try {
-        for (const entry of fs.readdirSync(pluginsDataRoot(), { withFileTypes: true })) {
-          if (entry.isDirectory() && !installed.has(entry.name)) insert.run(entry.name, userId);
-        }
-      } catch { /* no plugin data root yet */ }
-    } catch { /* plugins / queue table absent (slim schema) */ }
+    } catch { /* best effort — plugin tables may not exist */ }
   }
 
   private cleanupUserReferences(userId: number): void {

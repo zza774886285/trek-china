@@ -3,7 +3,6 @@ import { McpTransportController } from './mcp-transport.controller';
 import { McpTransportService } from './mcp-transport.service';
 import { AuthModule } from '../auth/auth.module';
 import { TokensModule } from '../tokens/tokens.module';
-import { OauthModule } from '../oauth/oauth.module';
 import { AddonsModule } from '../addons/addons.module';
 import { AuditModule } from '../audit/audit.module';
 
@@ -15,7 +14,6 @@ import { AuditModule } from '../audit/audit.module';
  * bearer verification, session create/resume, rate limiting, SSE keep-alive.
  */
 @Module({
-  imports: [AuthModule, TokensModule, OauthModule, AddonsModule, AuditModule],
   controllers: [McpTransportController],
   providers: [McpTransportService],
 })

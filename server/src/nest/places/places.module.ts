@@ -7,7 +7,6 @@ import { PlacesMcp } from './places.mcp';
 import { PermissionsModule } from '../permissions/permissions.module';
 import { AssignmentsDomainModule } from '../assignments/assignments-domain.module';
 import { AppConfigModule } from '../app-config/app-config.module';
-import { UnsplashModule } from '../unsplash/unsplash.module';
 import { PlacePhotosModule } from '../place-photos/place-photos.module';
 import { QueryHelpersModule } from '../query-helpers/query-helpers.module';
 import { MapsModule } from '../maps/maps.module';
@@ -39,7 +38,7 @@ import { MAX_PLACE_IMAGE_SIZE } from '../common/place-image-upload';
         buildStorageUploadOptions(storage, { category: 'places', maxSize: MAX_PLACE_IMAGE_SIZE }),
     }),
     StorageModule,
-    McpSharedModule, PermissionsModule, QueryHelpersModule, MapsModule, AuthModule, AppConfigModule, UnsplashModule, PlacePhotosModule, JourneyDomainModule, RealtimeModule, AssignmentsDomainModule],
+    McpSharedModule, PermissionsModule, QueryHelpersModule, MapsModule, AuthModule, AppConfigModule, PlacePhotosModule, JourneyDomainModule, RealtimeModule, AssignmentsDomainModule],
   controllers: [PlacesController],
   exports: [PlacesService],
 })
