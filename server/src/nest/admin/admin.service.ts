@@ -13,7 +13,6 @@ import { updateJwtSecret } from '../../config';
 // the cron path.
 import { revokeUserSessions, revokeUserSessionsForClient } from '../../mcp/sessionManager';
 import { invalidateMcpSessions } from '../../mcp';
-import { emitUserDeleted } from '../../plugin-user-lifecycle';
 import type { User, Addon } from '../../types';
 import { maybe_encrypt_api_key, decrypt_api_key } from '../common/crypto/apiKeyCrypto';
 import { avatarUrl } from '../common/avatarUrl';
@@ -255,7 +254,6 @@ export class AdminService {
     if (!userToDel) return { error: 'User not found', status: 404 };
 
     this.userCleanup.deleteUserCompletely(userToDel.id);
-    emitUserDeleted(userToDel.id); // let plugins erase their own per-user data
     return { email: userToDel.email };
   }
 

@@ -13,10 +13,6 @@ function toGcj(lng: number, lat: number, osmId?: string | null): [number, number
   if (osmId?.startsWith('amap:')) return [lng, lat]
   return wgs84ToGcj02(lng, lat)
 }
-/** 轨迹数据来自 trailsnap GPS，固定 WGS84 → GCJ02 */
-function trailToGcj(lng: number, lat: number): [number, number] {
-  return wgs84ToGcj02(lng, lat)
-}
 
 function loadAmapScript(apiKey: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -196,7 +192,7 @@ function JourneyMapAmap(
     // 绘制 trail
     if (trail && trail.length > 1) {
       const path = trail.map(p => {
-        const [gcjLng, gcjLat] = trailToGcj(p.lng, p.lat)
+        const [gcjLng, gcjLat] = toGcj(p.lng, p.lat)
         return new AMap.LngLat(gcjLng, gcjLat)
       })
       const polyline = new AMap.Polyline({
@@ -218,7 +214,7 @@ function JourneyMapAmap(
       for (const track of tracks) {
         if (track.points.length < 2) continue
         const path = track.points.map(([lat, lng]) => {
-          const [gcjLng, gcjLat] = trailToGcj(lng, lat)
+          const [gcjLng, gcjLat] = toGcj(lng, lat)
           return new AMap.LngLat(gcjLng, gcjLat)
         })
         // 白色底边

@@ -22,7 +22,6 @@ import { EphemeralTokenService } from './ephemeral-token.service';
 import { revokeUserSessions } from '../../mcp/sessionManager';
 import { UserCleanupService } from './user-cleanup.service';
 import { splitManagedKeys } from '../common/managed';
-import { emitUserDeleted } from '../../plugin-user-lifecycle';
 import { verifyJwtAndLoadUser } from './jwt-verify';
 import { User } from '../../types';
 import { DEMO_EMAIL_PRIMARY, DEMO_PASS, isDemoEmail } from '../common/demo';
@@ -580,7 +579,6 @@ export class AuthService {
       }
     }
     this.userCleanup.deleteUserCompletely(userId);
-    emitUserDeleted(userId); // let plugins erase their own per-user data
     return { success: true };
   }
 

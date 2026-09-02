@@ -9,7 +9,6 @@ import { PermissionsService } from '../permissions/permissions.service';
 import { RealtimeService } from '../realtime/realtime.service';
 import { TRIP_SELECT } from '../trips/trips.service';
 import type { TrekWsPayload, TrekWsTripEventName } from '@trek/shared';
-import { emitUserDeleted } from '../../plugin-user-lifecycle';
 import { NotFoundError, ValidationError } from '../common/domain-errors';
 import { NotificationsService } from '../notifications/notifications.service';
 
@@ -267,7 +266,6 @@ export class TripMembersService {
       // (trip_members, budget/packing/assignment links) via the ON DELETE foreign keys.
       this.db.prepare('DELETE FROM users WHERE id = ? AND is_guest = 1').run(guestUserId);
     })();
-    emitUserDeleted(guestUserId); // deliver the erasure to any active plugin now
     return true;
   }
 }

@@ -1,5 +1,5 @@
 import { WebSocketServer, WebSocket } from 'ws';
-import { emitPluginEvent, pluginEventMeta } from '../../plugin-event-sink';
+
 import { User } from '../../types';
 
 /**
@@ -189,11 +189,6 @@ export function broadcast(
   onlyUserId?: number,
 ): void {
   tripId = Number(tripId);
-  // Announce every CORE trip event (name only, never the payload) to subscribed
-  // plugins — before the room check so it fires even with no connected viewers
-  // and with no ws server at all, and skipping plugin:* re-broadcasts so a
-  // plugin's own events can't loop back.
-  if (!eventType.startsWith('plugin:')) emitPluginEvent(tripId, eventType, pluginEventMeta(eventType, payload));
   const room = rooms.get(tripId);
   if (!room || room.size === 0) return;
 

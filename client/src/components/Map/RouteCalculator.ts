@@ -15,11 +15,7 @@ function getAmapServiceKey(): string {
   return useSettingsStore.getState().settings.amap_service_key || ''
 }
 
-/** WGS84 → GCJ02, 返回 "lng,lat" 格式（高德 API 要求） */
-function wgs84ToAmapCoord(lng: number, lat: number): string {
-  const [gcjLng, gcjLat] = wgs84ToGcj02(lng, lat)
-  return `${gcjLng},${gcjLat}`
-}
+
 
 /** GCJ02 polyline 字符串 → WGS84 [lat, lng][] 数组 */
 function amapPolylineToCoords(polyline: string): [number, number][] {
