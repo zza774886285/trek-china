@@ -3,8 +3,6 @@ import { PermissionsModule } from '../permissions/permissions.module';
 import { DaysModule } from '../days/days.module';
 import { DayAssignmentsController, AssignmentOpsController } from './assignments.controller';
 import { AssignmentsDomainModule } from './assignments-domain.module';
-import { ItineraryRpc } from './itinerary.rpc';
-import { PluginGuardsModule } from '../plugins/host/plugin-guards.module';
 import { RealtimeModule } from '../realtime/realtime.module';
 import { AssignmentsMcp } from './assignments.mcp';
 import { AuthModule } from '../auth/auth.module';
@@ -21,9 +19,8 @@ import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
 @Module({
   // DaysModule: AssignmentsMcp injects DaysService for the target-day checks.
   // PermissionsModule: the controllers' TripAccessGuard injects PermissionsService.
-  imports: [McpSharedModule, AssignmentsDomainModule, DaysModule, PermissionsModule, AuthModule, RealtimeModule, PluginGuardsModule],
+  imports: [McpSharedModule, AssignmentsDomainModule, DaysModule, PermissionsModule, AuthModule, RealtimeModule],
   controllers: [DayAssignmentsController, AssignmentOpsController],
-  providers: [AssignmentsMcp, ItineraryRpc],
   exports: [AssignmentsDomainModule],
 })
 export class AssignmentsModule {}

@@ -2,11 +2,9 @@ import { Module } from '@nestjs/common';
 import { FilesController } from './files.controller';
 import { FilesDownloadController } from './files-download.controller';
 import { FilesService } from './files.service';
-import { FilesRpc } from './files.rpc';
 import { FilesMcp } from './files.mcp';
 import { AuthModule } from '../auth/auth.module';
 import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
-import { PluginGuardsModule } from '../plugins/host/plugin-guards.module';
 import { RealtimeModule } from '../realtime/realtime.module';
 import { PermissionsModule } from '../permissions/permissions.module';
 import { AppConfigModule } from '../app-config/app-config.module';
@@ -39,9 +37,8 @@ import { MAX_VIDEO_SIZE } from './files.constants';
     // AuthModule + McpSharedModule feed FilesMcp's demo and RBAC guards. Neither is
     // @Global, and AuthModule reaches this domain only through the leaf
     // AllowedFileTypesModule, so importing it here stays cycle-free.
-    EphemeralTokenModule, PermissionsModule, AppConfigModule, RealtimeModule, PluginGuardsModule, AuthModule, McpSharedModule],
+    EphemeralTokenModule, PermissionsModule, AppConfigModule, RealtimeModule, AuthModule, McpSharedModule],
   controllers: [FilesController, FilesDownloadController],
-  providers: [FilesService, FilesRpc, FilesMcp],
   exports: [FilesService],
 })
 export class FilesModule {}

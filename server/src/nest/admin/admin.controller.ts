@@ -4,7 +4,6 @@ import { readEnv } from '../../app-config';
 import { AdminService } from './admin.service';
 import { TokenService } from '../tokens/token.service';
 import { RegistrationInvitesService } from '../auth/registration-invites.service';
-import { OauthService } from '../oauth/oauth.service';
 import {
   AdminUserCreateDto,
   AdminUserUpdateDto,
@@ -19,7 +18,6 @@ import {
   AdminDefaultUserSettingsDto,
   AdminTestNotificationDto,
 } from './admin.dto';
-import { PluginRuntimeService } from '../plugins/plugin-runtime.service';
 import { AddonsService } from '../addons/addons.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AdminGuard } from '../auth/admin.guard';
@@ -62,12 +60,10 @@ export class AdminController {
   constructor(
     private readonly admin: AdminService,
     private readonly addons: AddonsService,
-    private readonly pluginRuntime: PluginRuntimeService,
     private readonly audit: AuditService,
     private readonly notifications: NotificationsService,
     private readonly tokens: TokenService,
     private readonly invites: RegistrationInvitesService,
-    private readonly oauth: OauthService,
   ) {}
 
   // ── Users ──
@@ -178,7 +174,7 @@ export class AdminController {
   // flags were raw app_settings SQL there even though the other flags lived in the
   // addons domain. The routes stay HERE rather than moving next to the service: an
   // admin-gated controller in AddonsModule would make that module import AuthModule,
-  // and PluginGuardsModule imports AddonsModule precisely because it is a leaf — the
+  // and  imports AddonsModule precisely because it is a leaf — the
   // edge would close a cycle.
 
   @Get('bag-tracking')

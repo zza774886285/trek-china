@@ -2,11 +2,9 @@ import { Module } from '@nestjs/common';
 import { DayNotesController } from './day-notes.controller';
 import { DayNotesService } from './day-notes.service';
 import { DayNotesMcp } from './day-notes.mcp';
-import { DayNotesRpc } from './day-notes.rpc';
 import { PermissionsModule } from '../permissions/permissions.module';
 import { AuthModule } from '../auth/auth.module';
 import { RealtimeModule } from '../realtime/realtime.module';
-import { PluginGuardsModule } from '../plugins/host/plugin-guards.module';
 import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
 
 /**
@@ -17,13 +15,11 @@ import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
  * SQL on `days` here, and DaysService reads `day_notes` the same way. Wiring the
  * modules to each other would buy nothing and cost a cycle.
  *
- * AuthModule is only for DayNotesMcp's demo-user gate, PluginGuardsModule only
- * for DayNotesRpc.
+ * AuthModule is only for DayNotesMcp's demo-user gate only
  */
 @Module({
-  imports: [McpSharedModule, PermissionsModule, AuthModule, RealtimeModule, PluginGuardsModule],
+  imports: [McpSharedModule, PermissionsModule, AuthModule, RealtimeModule],
   controllers: [DayNotesController],
-  providers: [DayNotesService, DayNotesMcp, DayNotesRpc],
   exports: [DayNotesService],
 })
 export class DayNotesModule {}

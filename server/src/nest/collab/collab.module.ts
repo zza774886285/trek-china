@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { CollabController, collabNoteFileFilter, MAX_NOTE_FILE_SIZE } from './collab.controller';
 import { CollabService } from './collab.service';
-import { CollabRpc } from './collab.rpc';
-import { PluginGuardsModule } from '../plugins/host/plugin-guards.module';
 import { RealtimeModule } from '../realtime/realtime.module';
 import { CollabMcp } from './collab.mcp';
 import { PermissionsModule } from '../permissions/permissions.module';
@@ -30,10 +28,8 @@ import { RateLimitModule } from '../common/rate-limit.module';
         }),
     }),
     StorageModule,
-    McpSharedModule, NotificationsModule, PermissionsModule, AuthModule, RealtimeModule, PluginGuardsModule, AddonsModule, RateLimitModule],
+    McpSharedModule, NotificationsModule, PermissionsModule, AuthModule, RealtimeModule, AddonsModule, RateLimitModule],
   controllers: [CollabController],
-  providers: [CollabService, CollabMcp, CollabRpc],
-  // For in-container consumers (CollabRpc).
   exports: [CollabService],
 })
 export class CollabModule {}

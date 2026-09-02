@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { AtlasController } from './atlas.controller';
 import { TravelStatsController } from './travel-stats.controller';
 import { AtlasService } from './atlas.service';
-import { AtlasRpc } from './atlas.rpc';
-import { PluginGuardsModule } from '../plugins/host/plugin-guards.module';
 import { AtlasMcp } from './atlas.mcp';
 import { AddonsModule } from '../addons/addons.module';
 import { AuthModule } from '../auth/auth.module';
@@ -14,7 +12,6 @@ import { RateLimitModule } from '../common/rate-limit.module';
 
 /**
  * Atlas addon domain (L7 leaf module). Registered in AppModule. Exports
- * AtlasService for the plugin RPC surface (AtlasRpc injects it).
  * AtlasMcp is a provider (not a controller) — the nest-mcp registry discovers
  * it after app.init().
  *
@@ -31,9 +28,8 @@ import { RateLimitModule } from '../common/rate-limit.module';
  * its TokenService unresolvable here. TokensModule is a leaf, so the edge is free.
  */
 @Module({
-  imports: [AuthModule, PluginGuardsModule, AddonsModule, TokensModule, RateLimitModule],
+  imports: [AuthModule, AddonsModule, TokensModule, RateLimitModule],
   controllers: [AtlasController, TravelStatsController, PublicStatsController],
-  providers: [AtlasService, AtlasMcp, AtlasRpc, ApiTokenGuard],
   exports: [AtlasService],
 })
 export class AtlasModule {}

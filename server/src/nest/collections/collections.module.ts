@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CollectionsController } from './collections.controller';
 import { CollectionsService } from './collections.service';
-import { CollectionsRpc } from './collections.rpc';
-import { PluginGuardsModule } from '../plugins/host/plugin-guards.module';
 import { AppConfigModule } from '../app-config/app-config.module';
 import { CollectionsMcp } from './collections.mcp';
 import { AddonsModule } from '../addons/addons.module';
@@ -35,9 +33,8 @@ import { MAX_COVER_SIZE } from './collections.controller';
         }),
     }),
     StorageModule,
-    NotificationsModule, AddonsModule, PermissionsModule, AuthModule, AppConfigModule, PluginGuardsModule],
+    NotificationsModule, AddonsModule, PermissionsModule, AuthModule, AppConfigModule],
   controllers: [CollectionsController],
-  providers: [CollectionsService, CollectionsMcp, CollectionsRpc],
   exports: [CollectionsService],
 })
 export class CollectionsModule {}

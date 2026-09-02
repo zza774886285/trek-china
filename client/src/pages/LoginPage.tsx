@@ -15,7 +15,7 @@ import React from 'react';
 import ToggleSwitch from '../components/Settings/ToggleSwitch';
 import { SUPPORTED_LANGUAGES, useTranslation } from '../i18n';
 import { useLogin } from './login/useLogin';
-import LoginWorld from './login/LoginWorld';
+// LoginWorld removed (overseas animation)
 import { clearSignedOut } from '../utils/signedOut'
 
 /** Fixed so the sky does not reshuffle on every render. */
@@ -118,7 +118,7 @@ export default function LoginPage(): React.ReactElement {
             map, except now every route departs at once. The network finishing is
             the moment — no separate imagery, no plane flying off alone. */}
         <div className="takeoff-world">
-          <LoginWorld variant="takeoff" />
+          <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20" />
         </div>
 
         {/* The colour rises with the departures rather than sitting there from the start. */}
@@ -371,7 +371,7 @@ export default function LoginPage(): React.ReactElement {
         {/* Coastlines as a dot map, with routes lighting up between cities across
             it. The geometry is TREK's own Atlas bundle, baked in at build time
             because this screen is unauthenticated. */}
-        <LoginWorld />
+        <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20" />
 
         {/* No max-width: the tagline stays on one line, so the block is allowed to
             use the whole panel rather than wrapping inside it. */}

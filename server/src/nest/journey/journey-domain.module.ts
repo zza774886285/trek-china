@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { RealtimeModule } from '../realtime/realtime.module';
 import { TrekPhotosModule } from '../photos/trek-photos.module';
 import { JourneyDomainService } from './journey-domain.service';
-import { PluginGuardsModule } from '../plugins/host/plugin-guards.module';
 import { JourneyShareService } from './journey-share.service';
 import { SettingsModule } from '../settings/settings.module';
 
@@ -27,7 +26,7 @@ import { SettingsModule } from '../settings/settings.module';
  * job rather than a second copy of its SQL here.
  */
 @Module({
-  imports: [RealtimeModule, TrekPhotosModule, PluginGuardsModule, SettingsModule],
+  imports: [RealtimeModule, TrekPhotosModule, SettingsModule],
   providers: [JourneyDomainService, JourneyShareService],
   exports: [JourneyDomainService, JourneyShareService],
 })

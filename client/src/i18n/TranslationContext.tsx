@@ -17,29 +17,8 @@ export { SUPPORTED_LANGUAGES }
 // One explicit dynamic import per locale — Vite code-splits a separate chunk per locale.
 // Only the active locale is fetched; en is always available synchronously as the fallback.
 const localeLoaders: Record<SupportedLanguageCode, () => Promise<{ default: TranslationStrings }>> = {
-  en:      () => Promise.resolve({ default: en }),
-  de:      () => import('@trek/shared/i18n/de'),
-  es:      () => import('@trek/shared/i18n/es'),
-  fr:      () => import('@trek/shared/i18n/fr'),
-  hu:      () => import('@trek/shared/i18n/hu'),
-  it:      () => import('@trek/shared/i18n/it'),
-  tr:      () => import('@trek/shared/i18n/tr'),
-  ru:      () => import('@trek/shared/i18n/ru'),
-  zh:      () => import('@trek/shared/i18n/zh'),
-  'zh-TW': () => import('@trek/shared/i18n/zh-TW'),
-  nl:      () => import('@trek/shared/i18n/nl'),
-  id:      () => import('@trek/shared/i18n/id'),
-  ar:      () => import('@trek/shared/i18n/ar'),
-  br:      () => import('@trek/shared/i18n/br'),
-  cs:      () => import('@trek/shared/i18n/cs'),
-  pl:      () => import('@trek/shared/i18n/pl'),
-  ja:      () => import('@trek/shared/i18n/ja'),
-  ko:      () => import('@trek/shared/i18n/ko'),
-  uk:      () => import('@trek/shared/i18n/uk'),
-  gr:      () => import('@trek/shared/i18n/gr'),
-  sv:      () => import('@trek/shared/i18n/sv'),
-  vi:      () => import('@trek/shared/i18n/vi'),
-  ca:      () => import('@trek/shared/i18n/ca'),
+  en: () => Promise.resolve({ default: en }),
+  zh: () => import('@trek/shared/i18n/zh'),
 }
 
 // Re-export pure helpers that live in shared so downstream consumers can import them

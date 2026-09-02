@@ -6,8 +6,6 @@ import { DaysModule } from '../days/days.module';
 import { PermissionsModule } from '../permissions/permissions.module';
 import { ReservationsController } from './reservations.controller';
 import { ReservationsService } from './reservations.service';
-import { ReservationsRpc } from './reservations.rpc';
-import { PluginGuardsModule } from '../plugins/host/plugin-guards.module';
 import { RealtimeModule } from '../realtime/realtime.module';
 import { ReservationsMcp } from './reservations.mcp';
 import { UpcomingReservationsController } from './upcoming-reservations.controller';
@@ -25,10 +23,8 @@ import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
 @Module({
   // DaysModule: ReservationsMcp injects DaysService for its nine getDay calls.
   // BudgetModule: ReservationsService + ReservationsMcp inject BudgetService (budget-sync seam).
-  imports: [McpSharedModule, NotificationsModule, DaysModule, AssignmentsModule, PermissionsModule, BudgetModule, AuthModule, RealtimeModule, PluginGuardsModule, ReservationsReadModule, AirtrailCoreModule],
+  imports: [McpSharedModule, NotificationsModule, DaysModule, AssignmentsModule, PermissionsModule, BudgetModule, AuthModule, RealtimeModule, ReservationsReadModule, AirtrailCoreModule],
   controllers: [ReservationsController, UpcomingReservationsController],
-  providers: [ReservationsService, ReservationsMcp, ReservationsRpc],
-  // For in-container consumers (ReservationsRpc, TripsService, BookingImportService).
   exports: [ReservationsService],
 })
 export class ReservationsModule {}

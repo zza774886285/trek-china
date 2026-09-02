@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { JourneyDomainModule } from '../journey/journey-domain.module';
 import { PlacesController } from './places.controller';
 import { PlacesService } from './places.service';
-import { PlacesRpc } from './places.rpc';
-import { PluginGuardsModule } from '../plugins/host/plugin-guards.module';
 import { RealtimeModule } from '../realtime/realtime.module';
 import { PlacesMcp } from './places.mcp';
 import { PermissionsModule } from '../permissions/permissions.module';
@@ -26,7 +24,6 @@ import { MAX_PLACE_IMAGE_SIZE } from '../common/place-image-upload';
  * Tags for the joined projections, and on MapsModule for places.mcp.ts's
  * search_place tool. Exports PlacesService for the in-container consumers —
  * TripsService's trip summary, DaysMcp's place-accommodation creation,
- * BookingImportService and the plugin RPC surface, PlacesRpc. There
  * is no places.bridge.ts: nothing outside the container consumes this domain.
  */
 @Module({
@@ -42,9 +39,8 @@ import { MAX_PLACE_IMAGE_SIZE } from '../common/place-image-upload';
         buildStorageUploadOptions(storage, { category: 'places', maxSize: MAX_PLACE_IMAGE_SIZE }),
     }),
     StorageModule,
-    McpSharedModule, PermissionsModule, QueryHelpersModule, MapsModule, AuthModule, AppConfigModule, UnsplashModule, PlacePhotosModule, JourneyDomainModule, RealtimeModule, PluginGuardsModule, AssignmentsDomainModule],
+    McpSharedModule, PermissionsModule, QueryHelpersModule, MapsModule, AuthModule, AppConfigModule, UnsplashModule, PlacePhotosModule, JourneyDomainModule, RealtimeModule, AssignmentsDomainModule],
   controllers: [PlacesController],
-  providers: [PlacesService, PlacesMcp, PlacesRpc],
   exports: [PlacesService],
 })
 export class PlacesModule {}
