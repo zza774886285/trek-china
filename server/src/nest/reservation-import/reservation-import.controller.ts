@@ -21,7 +21,6 @@ import { RequireAddon } from '../addons/require-addon.decorator';
 import { ADDON_IDS } from '../../addons';
 import { BookingImportService } from '../booking-import/booking-import.service';
 import { ImportJobsService } from '../booking-import/import-jobs.service';
-import type { AirtrailImportResult } from '@trek/shared';
 import { bookingImportModeSchema } from '@trek/shared';
 import type { BookingImportPreviewItem, BookingImportPreviewResponse, BookingImportConfirmResponse, BookingImportMode } from '@trek/shared';
 import { BookingImportConfirmDto, BookingImportPreviewDto } from './reservation-import.dto';

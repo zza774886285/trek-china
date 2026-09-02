@@ -30,7 +30,6 @@ export * from './budget/budget.schema';
 export * from './reservation/reservation.schema';
 export * from './reservation/ki-reservation.schema';
 export * from './datetime/datetime-normalize';
-export * from './airtrail/airtrail.schema';
 export * from './day/day.schema';
 export * from './day/note-colors';
 export * from './assignment/assignment.schema';
@@ -52,8 +51,6 @@ export * from './settings/settings.schema';
 export * from './appearance/appearance.schema';
 export * from './backup/backup.schema';
 export * from './auth/auth.schema';
-export * from './oidc/oidc.schema';
-export * from './oauth/oauth.schema';
 export * from './admin/admin.schema';
 
 // Realtime WS event contract registry (event names + payload schemas)

@@ -29,7 +29,6 @@ import mobileVacay from './mobileVacay';
 import nav from './nav';
 import notif from './notif';
 import notifications from './notifications';
-import oauth from './oauth';
 import packing from './packing';
 import pdf from './pdf';
 import perm from './perm';
@@ -91,7 +90,6 @@ const locale = {
   ...todo,
   ...notif,
   ...journey,
-  ...oauth,
   ...system_notice,
   ...transport,
   ...help,

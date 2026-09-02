@@ -76,11 +76,19 @@ export class MapsController {
     @Query('lang') lang?: string,
   ): Promise<MapsSearchResult> {
     try {
-      return await this.maps.search(user.id, body.query, lang, body.locationBias);
+      return await this.maps.search(user.id, body.query, lang, body.locationBias, body.city);
     } catch (err: unknown) {
       console.error('Maps search error:', err);
       throw toHttpException(err, 'Search error', 500);
     }
+  }
+
+  /** 推断行程的默认搜索城市 */
+  @Get('trip-city')
+  async tripCity(@Query('tripId') tripId?: string): Promise<{ city: string | null }> {
+    const id = tripId ? Number(tripId) : NaN;
+    if (!Number.isFinite(id)) return { city: null };
+    return { city: this.maps.inferTripCity(id) };
   }
 
   // OSM-only POI explore: places of a category within the current map viewport.

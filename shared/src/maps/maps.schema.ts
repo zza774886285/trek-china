@@ -26,6 +26,8 @@ export const mapsSearchRequestSchema = z.object({
   // foreign-region queries. z.number() is finite-only (zod v4), matching the
   // legacy Number.isFinite() check; radius was never validated beyond "number".
   locationBias: latLng.extend({ radius: z.number().optional() }).optional(),
+  // Optional city filter for Amap POI search
+  city: z.string().optional(),
 });
 export type MapsSearchRequest = z.infer<typeof mapsSearchRequestSchema>;
 

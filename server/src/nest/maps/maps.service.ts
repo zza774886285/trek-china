@@ -545,8 +545,36 @@ export class MapsService {
 
   // ── Controller-facing surface (unchanged signatures) ───────────────────────
 
-  search(userId: number, query: string, lang?: string, locationBias?: { lat: number; lng: number; radius?: number }): Promise<MapsSearchResult> {
-    return this.searchPlaces(userId, query, lang, locationBias) as Promise<MapsSearchResult>;
+  /** 推断行程的默认搜索城市（标题匹配→地点地址匹配） */
+  inferTripCity(tripId: number): string | null {
+    const CITY_NAMES = [
+      '北京','上海','天津','重庆','广州','深圳','珠海','佛山','东莞','中山',
+      '南京','无锡','常州','苏州','南通','杭州','宁波','温州','嘉兴','绍兴','金华',
+      '福州','厦门','泉州','济南','青岛','烟台','潍坊','郑州','洛阳','武汉','宜昌','襄阳',
+      '长沙','株洲','湘潭','衡阳','岳阳','成都','绵阳','乐山','贵阳','遵义','昆明','丽江',
+      '西安','宝鸡','咸阳','拉萨','桂林','南宁','柳州','海口','三亚',
+      '沈阳','大连','鞍山','长春','哈尔滨','大庆','合肥','芜湖','南昌','九江','赣州',
+      '太原','大同','石家庄','唐山','呼和浩特','包头','兰州','天水','西宁','银川','乌鲁木齐',
+    ];
+    // L1: 行程标题匹配
+    const trip = this.database.get<{ title: string }>('SELECT title FROM trips WHERE id = ?', tripId);
+    if (trip?.title) {
+      for (const c of CITY_NAMES) {
+        if (trip.title.includes(c)) return c;
+      }
+    }
+    // L2: 第一个有地址的地点匹配
+    const place = this.database.get<{ address: string }>('SELECT address FROM places WHERE trip_id = ? AND address IS NOT NULL AND address != \'\' LIMIT 1', tripId);
+    if (place?.address) {
+      for (const c of CITY_NAMES) {
+        if (place.address.includes(c)) return c;
+      }
+    }
+    return null;
+  }
+
+  search(userId: number, query: string, lang?: string, locationBias?: { lat: number; lng: number; radius?: number }, city?: string): Promise<MapsSearchResult> {
+    return this.searchPlaces(userId, query, lang, locationBias, city) as Promise<MapsSearchResult>;
   }
 
   autocomplete(userId: number, input: string, lang?: string, locationBias?: LocationBias, sessionToken?: string): Promise<MapsAutocompleteResult> {
@@ -1453,15 +1481,43 @@ export class MapsService {
   async searchAmapPoi(
     amapServiceKey: string, query: string, lang?: string,
     locationBias?: { lat: number; lng: number; radius?: number },
+    city?: string,
   ): Promise<{ places: Record<string, unknown>[]; source: string }> {
-    const params = new URLSearchParams({ key: amapServiceKey, keywords: query, output: 'json', offset: '10', extensions: 'base' });
+    const params = new URLSearchParams({ key: amapServiceKey, keywords: query, output: 'json', offset: '10', extensions: 'all' });
+    if (city) params.set('city', city);
+    // 有位置偏见时按距离排序
+    if (locationBias) {
+      params.set('sortrule', 'distance');
+      params.set('location', `${locationBias.lng},${locationBias.lat}`);
+    }
     const response = await fetch(`https://restapi.amap.com/v3/place/text?${params.toString()}`);
     if (!response.ok) throw new Error(`AMap POI API error: ${response.status}`);
     const data = await response.json() as { status: string; info: string; pois?: Array<{ name: string; address: string; location: string; poiid: string; tel?: string; website?: string; type: string }> };
     if (data.status !== '1') throw new Error(`AMap POI error: ${data.info}`);
     const places = (data.pois || []).map(poi => {
       const [lng, lat] = poi.location.split(',').map(Number);
-      return { google_place_id: null, google_ftid: null, osm_id: `amap:${poi.poiid}`, name: poi.name, address: poi.address || '', lat, lng, rating: null, website: poi.website || null, phone: poi.tel || null, types: poi.type ? [poi.type] : [], source: 'amap' };
+      // extensions=all 返回 biz_ext (rating/cost/opentime) 和 photos
+      const biz = (poi as Record<string, unknown>).biz_ext as Record<string, unknown> | undefined;
+      const photos = Array.isArray((poi as Record<string, unknown>).photos)
+        ? ((poi as Record<string, unknown>).photos as Array<{ url: string }>).map(ph => ph.url).filter(Boolean).slice(0, 3)
+        : [];
+      // 自动生成高德地图链接
+      const amapLink = `https://uri.amap.com/marker?position=${lng},${lat}&name=${encodeURIComponent(poi.name)}`;
+      return {
+        google_place_id: null, google_ftid: null,
+        osm_id: `amap:${poi.poiid}`,
+        name: poi.name,
+        address: poi.address || '',
+        lat, lng,
+        rating: biz?.rating ? Number(biz.rating) : null,
+        cost: biz?.cost ? Number(biz.cost) : null,
+        opentime: biz?.opentime2 || biz?.open_time || null,
+        website: amapLink,
+        phone: poi.tel || null,
+        types: poi.type ? [poi.type] : [],
+        photos,
+        source: 'amap',
+      };
     });
     return { places, source: 'amap' };
   }
@@ -1471,6 +1527,7 @@ export class MapsService {
     query: string,
     lang?: string,
     locationBias?: { lat: number; lng: number; radius?: number },
+    city?: string,
   ): Promise<{ places: Record<string, unknown>[]; source: string }> {
     // ── POI 搜索源路由：用户设置 poi_search_source 控制 ──
     const _poiRow = this.database.get<{ value: string }>(
@@ -1483,7 +1540,7 @@ export class MapsService {
       if (_amapRow?.value && _amapRow.value.trim()) {
         const _svcRow = this.database.get<{ value: string }>('SELECT value FROM app_settings WHERE key = ?', 'amap_service_key');
         const _svcKey = _svcRow?.value && _svcRow.value.trim() ? _svcRow.value.trim() : _amapRow.value.trim();
-        return await this.searchAmapPoi(_svcKey, query, lang, locationBias);
+        return await this.searchAmapPoi(_svcKey, query, lang, locationBias, city);
       }
     }
     const { key: apiKey, source: keySource } = this.resolveMapsKey(userId);

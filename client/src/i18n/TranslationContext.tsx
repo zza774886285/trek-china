@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react'
 import { useSettingsStore } from '../store/settingsStore'
-import en from '@trek/shared/i18n/en'
+import zh from '@trek/shared/i18n/zh'
 import type { SupportedLanguageCode } from '@trek/shared'
 import {
   SUPPORTED_LANGUAGES,
@@ -17,7 +17,7 @@ export { SUPPORTED_LANGUAGES }
 // One explicit dynamic import per locale — Vite code-splits a separate chunk per locale.
 // Only the active locale is fetched; en is always available synchronously as the fallback.
 const localeLoaders: Record<SupportedLanguageCode, () => Promise<{ default: TranslationStrings }>> = {
-  en: () => Promise.resolve({ default: en }),
+  en: () => Promise.resolve({ default: zh }),
   zh: () => import('@trek/shared/i18n/zh'),
 }
 
