@@ -21,7 +21,7 @@ import { StorageModule } from '../storage/storage.module';
  *  imports only AppConfig+Audit+Scheduling).
  *  NotificationsService and NotificationPreferencesService are exported for
  *  in-container consumers (AdminController's dev test send and preferences tab,
- *  the plugin RPC surface, HostSurfaceRpc). */
+ *  the plugin RPC surface). */
 @Module({
   imports: [AuthModule, MailerModule, SchedulingModule, StorageModule],
   controllers: [NotificationsController, AdminNotificationPreferencesController],

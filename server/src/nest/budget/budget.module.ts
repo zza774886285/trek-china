@@ -20,6 +20,7 @@ import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
 @Module({
   imports: [McpSharedModule, PermissionsModule, AppConfigModule, RealtimeModule, AddonsModule, TripMembershipModule],
   controllers: [BudgetController],
+  providers: [BudgetService, ExchangeRatesService],
   // ReservationsService, BookingImportService).
   exports: [BudgetService, ExchangeRatesService],
 })

@@ -11,10 +11,13 @@ import { AddonsModule } from '../addons/addons.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
 
-/** Packing domain — registered in AppModule. Exports PackingService. */
+/** Packing domain (S2 — Phase 2 trip sub-domain). Registered in AppModule.
+ *  Exports PackingService for in-container consumers (TripsService bundle,
+ *). */
 @Module({
   imports: [McpSharedModule, NotificationsModule, PermissionsModule, AuthModule, RealtimeModule, AddonsModule, AuditModule],
   controllers: [PackingController, AdminPackingTemplatesController],
+  providers: [PackingService, PackingMcp],
   exports: [PackingService],
 })
 export class PackingModule {}

@@ -8,11 +8,13 @@ import { NotificationsModule } from '../notifications/notifications.module';
 
 /**
  * Vacay addon domain (S1 — Phase 2 trip sub-domain). Registered in AppModule.
+ * VacayService is exported for the plugin host surface ();
  * VacayMcp carries the DI-discovered MCP tools/resources.
  */
 @Module({
   imports: [NotificationsModule, AuthModule, AddonsModule],
   controllers: [VacayController],
+  providers: [VacayService, VacayMcp],
   exports: [VacayService],
 })
 export class VacayModule {}

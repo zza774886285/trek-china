@@ -13,7 +13,7 @@ import { SettingsModule } from '../settings/settings.module';
  * (and with it both photo providers) into their graphs. This carries the two
  * services and nothing else - same shape as TrekPhotosModule.
  *
- * JournalRpc moved out to JournalRpcModule when it started writing photo bytes:
+ * moved out to JournalRpcModule when it started writing photo bytes:
  * that needs StorageService and MemoriesModule, and pulling those in here would
  * undo the whole point of this module.
  *

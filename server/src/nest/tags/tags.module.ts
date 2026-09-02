@@ -8,8 +8,11 @@ import { AuthModule } from '../auth/auth.module';
 @Module({
   imports: [AuthModule],
   controllers: [TagsController],
+  // must stay in providers: the plugin RPC registry discovers marked
   // PROVIDERS only, and a missing entry here would leave tags.* answering
   // PERMISSION_DENIED with no other symptom.
+  providers: [TagsService, TagsMcp],
+  // For in-container consumers ().
   exports: [TagsService],
 })
 export class TagsModule {}

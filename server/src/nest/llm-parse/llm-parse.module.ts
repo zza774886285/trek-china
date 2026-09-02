@@ -9,7 +9,7 @@ import { AppConfigModule } from '../app-config/app-config.module';
 
 /**
  * Provides the LLM booking-import fallback; imported by BookingImportModule.
- * Exports LlmConfigResolver for the plugin host surface (HostSurfaceRpc).
+ * Exports LlmConfigResolver for the plugin host surface ().
  */
 @Module({
   imports: [AppConfigModule, SettingsModule, AddonsModule],

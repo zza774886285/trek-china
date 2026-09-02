@@ -30,6 +30,8 @@ import { RateLimitModule } from '../common/rate-limit.module';
     StorageModule,
     McpSharedModule, NotificationsModule, PermissionsModule, AuthModule, RealtimeModule, AddonsModule, RateLimitModule],
   controllers: [CollabController],
+  providers: [CollabService, CollabMcp],
+  // For in-container consumers ().
   exports: [CollabService],
 })
 export class CollabModule {}

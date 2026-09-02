@@ -47,6 +47,7 @@ import { MAX_COVER_SIZE, TRIP_COVER_FILE_FILTER } from './trips.controller';
     StorageModule,
     McpSharedModule, TodoModule, PackingModule, FilesModule, ReservationsModule, DaysModule, PermissionsModule, AuditModule, BudgetModule, CollabModule, VacayModule, PlacesModule, AuthModule, AppConfigModule, RealtimeModule, AddonsModule, TripMembershipModule, CalendarModule, AccommodationsModule, TripMembersModule, TripReadModelModule],
   controllers: [TripsController],
+  providers: [TripsService, TripsMcp, TripPromptsMcp],
   // Exported for FeedsModule (ICS feeds) and PluginsModule (RPC host injection).
   exports: [TripsService],
 })

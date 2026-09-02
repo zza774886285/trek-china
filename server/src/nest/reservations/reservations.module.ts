@@ -24,6 +24,8 @@ import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
   // BudgetModule: ReservationsService + ReservationsMcp inject BudgetService (budget-sync seam).
   imports: [McpSharedModule, NotificationsModule, DaysModule, AssignmentsModule, PermissionsModule, BudgetModule, AuthModule, RealtimeModule, ReservationsReadModule],
   controllers: [ReservationsController, UpcomingReservationsController],
+  providers: [ReservationsService, ReservationsMcp],
+  // For in-container consumers (, TripsService, BookingImportService).
   exports: [ReservationsService],
 })
 export class ReservationsModule {}

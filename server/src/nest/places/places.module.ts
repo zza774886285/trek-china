@@ -23,6 +23,7 @@ import { MAX_PLACE_IMAGE_SIZE } from '../common/place-image-upload';
  * Tags for the joined projections, and on MapsModule for places.mcp.ts's
  * search_place tool. Exports PlacesService for the in-container consumers —
  * TripsService's trip summary, DaysMcp's place-accommodation creation,
+ * BookingImportService and the plugin RPC surface. There
  * is no places.bridge.ts: nothing outside the container consumes this domain.
  */
 @Module({
@@ -40,6 +41,7 @@ import { MAX_PLACE_IMAGE_SIZE } from '../common/place-image-upload';
     StorageModule,
     McpSharedModule, PermissionsModule, QueryHelpersModule, MapsModule, AuthModule, AppConfigModule, PlacePhotosModule, JourneyDomainModule, RealtimeModule, AssignmentsDomainModule],
   controllers: [PlacesController],
+  providers: [PlacesService, PlacesMcp],
   exports: [PlacesService],
 })
 export class PlacesModule {}

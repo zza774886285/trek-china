@@ -13,6 +13,7 @@ import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
 @Module({
   imports: [McpSharedModule, PermissionsModule, AuthModule, RealtimeModule, AddonsModule],
   controllers: [TodoController],
+  providers: [TodoService, TodoMcp],
   exports: [TodoService],
 })
 export class TodoModule {}

@@ -39,6 +39,7 @@ import { MAX_VIDEO_SIZE } from './files.constants';
     // AllowedFileTypesModule, so importing it here stays cycle-free.
     EphemeralTokenModule, PermissionsModule, AppConfigModule, RealtimeModule, AuthModule, McpSharedModule],
   controllers: [FilesController, FilesDownloadController],
+  providers: [FilesService, FilesMcp],
   exports: [FilesService],
 })
 export class FilesModule {}

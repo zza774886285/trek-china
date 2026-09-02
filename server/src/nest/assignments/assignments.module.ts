@@ -21,6 +21,7 @@ import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
   // PermissionsModule: the controllers' TripAccessGuard injects PermissionsService.
   imports: [McpSharedModule, AssignmentsDomainModule, DaysModule, PermissionsModule, AuthModule, RealtimeModule],
   controllers: [DayAssignmentsController, AssignmentOpsController],
+  providers: [AssignmentsMcp],
   exports: [AssignmentsDomainModule],
 })
 export class AssignmentsModule {}

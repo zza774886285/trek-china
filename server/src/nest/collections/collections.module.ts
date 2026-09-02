@@ -35,6 +35,7 @@ import { MAX_COVER_SIZE } from './collections.controller';
     StorageModule,
     NotificationsModule, AddonsModule, PermissionsModule, AuthModule, AppConfigModule],
   controllers: [CollectionsController],
+  providers: [CollectionsService, CollectionsMcp],
   exports: [CollectionsService],
 })
 export class CollectionsModule {}

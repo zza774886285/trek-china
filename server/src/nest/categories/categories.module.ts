@@ -14,6 +14,8 @@ import { CategoriesService } from './categories.service';
   // for the same reason budget/ does it.
   imports: [McpSharedModule, AppConfigModule],
   controllers: [CategoriesController],
+  providers: [CategoriesService, CategoriesMcp],
+  // For in-container consumers ().
   exports: [CategoriesService],
 })
 export class CategoriesModule {}

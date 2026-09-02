@@ -22,6 +22,7 @@ import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
 @Module({
   imports: [McpSharedModule, PermissionsModule, RealtimeModule, DatabaseModule, PlacesModule, AuthModule],
   controllers: [AccommodationsController],
+  providers: [AccommodationsService, AccommodationsMcp],
   exports: [AccommodationsService],
 })
 export class AccommodationsModule {}

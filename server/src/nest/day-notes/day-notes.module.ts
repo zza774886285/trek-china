@@ -16,10 +16,12 @@ import { McpSharedModule } from '../mcp-shared/mcp-shared.module';
  * modules to each other would buy nothing and cost a cycle.
  *
  * AuthModule is only for DayNotesMcp's demo-user gate only
+ * for.
  */
 @Module({
   imports: [McpSharedModule, PermissionsModule, AuthModule, RealtimeModule],
   controllers: [DayNotesController],
+  providers: [DayNotesService, DayNotesMcp],
   exports: [DayNotesService],
 })
 export class DayNotesModule {}

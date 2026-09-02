@@ -12,6 +12,7 @@ import { RateLimitModule } from '../common/rate-limit.module';
 
 /**
  * Atlas addon domain (L7 leaf module). Registered in AppModule. Exports
+ * AtlasService for the plugin RPC surface ( injects it).
  * AtlasMcp is a provider (not a controller) — the nest-mcp registry discovers
  * it after app.init().
  *
@@ -30,6 +31,7 @@ import { RateLimitModule } from '../common/rate-limit.module';
 @Module({
   imports: [AuthModule, AddonsModule, TokensModule, RateLimitModule],
   controllers: [AtlasController, TravelStatsController, PublicStatsController],
+  providers: [AtlasService, AtlasMcp, ApiTokenGuard],
   exports: [AtlasService],
 })
 export class AtlasModule {}
