@@ -12,10 +12,7 @@ function toGcj(lng: number, lat: number, osmId?: string | null): [number, number
   if (osmId?.startsWith('amap:')) return [lng, lat] // 已是 GCJ02
   return wgs84ToGcj02(lng, lat)
 }
-/** 路线数据来自高德路线规划 API，已是 GCJ02 */
-function toGcjForce(lng: number, lat: number): [number, number] {
-  return [lng, lat]
-}
+
 
 function loadAmapScript(apiKey: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -165,7 +162,8 @@ export const MapViewAmap = memo(function MapViewAmap({
     activeRoute.forEach((segment) => {
       // route data is [lat, lng] (GeoJSON order) — swap to (lng, lat) for AMap
       const path = segment.map(([lat, lng]) => {
-        const [gcjLng, gcjLat] = toGcjForce(lng, lat)
+        const [wgsLng, wgsLat] = [lng, lat]
+        const [gcjLng, gcjLat] = wgs84ToGcj02(wgsLng, wgsLat)
         return new AMap.LngLat(gcjLng, gcjLat)
       })
       const polyline = new AMap.Polyline({
