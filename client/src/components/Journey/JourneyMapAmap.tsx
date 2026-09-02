@@ -8,7 +8,13 @@ import type { AMapMap, AMapMarker, AMapPolyline } from '../Map/amapTypes'
 import '../Map/amapTypes' // ensure global Window.AMap declaration is loaded
 
 /* ── 工具函数 ──────────────────────────────────────────────────────────── */
-function gcjPosition(lng: number, lat: number): [number, number] {
+/** 高德来源已是 GCJ02，跳过转换 */
+function toGcj(lng: number, lat: number, source?: string | null): [number, number] {
+  if (source === 'amap') return [lng, lat]
+  return wgs84ToGcj02(lng, lat)
+}
+/** 轨迹数据来自 trailsnap GPS，固定 WGS84 → GCJ02 */
+function trailToGcj(lng: number, lat: number): [number, number] {
   return wgs84ToGcj02(lng, lat)
 }
 
@@ -87,6 +93,7 @@ interface MarkerItem {
   label: string
   dayColor: string
   dayLabel: number
+  source?: string | null
 }
 
 function buildMarkerItems(entries: MapEntry[]): MarkerItem[] {
@@ -100,6 +107,7 @@ function buildMarkerItems(entries: MapEntry[]): MarkerItem[] {
         label: e.title || 'Entry',
         dayColor: e.dayColor || '#52525B',
         dayLabel: e.dayLabel ?? 1,
+        source: (e as any).source ?? null,
       })
     }
   }
@@ -188,7 +196,7 @@ function JourneyMapAmap(
     // 绘制 trail
     if (trail && trail.length > 1) {
       const path = trail.map(p => {
-        const [gcjLng, gcjLat] = gcjPosition(p.lng, p.lat)
+        const [gcjLng, gcjLat] = trailToGcj(p.lng, p.lat)
         return new AMap.LngLat(gcjLng, gcjLat)
       })
       const polyline = new AMap.Polyline({
@@ -210,7 +218,7 @@ function JourneyMapAmap(
       for (const track of tracks) {
         if (track.points.length < 2) continue
         const path = track.points.map(([lat, lng]) => {
-          const [gcjLng, gcjLat] = gcjPosition(lng, lat)
+          const [gcjLng, gcjLat] = trailToGcj(lng, lat)
           return new AMap.LngLat(gcjLng, gcjLat)
         })
         // 白色底边
@@ -239,7 +247,7 @@ function JourneyMapAmap(
 
     // 绘制 markers
     items.forEach(item => {
-      const [gcjLng, gcjLat] = gcjPosition(item.lng, item.lat)
+      const [gcjLng, gcjLat] = toGcj(item.lng, item.lat, item.source)
       const isSelected = item.id === activeMarkerId
       const html = markerHtml(item.dayColor, item.dayLabel, isSelected)
 

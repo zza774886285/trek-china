@@ -7,8 +7,14 @@ import type { AMapMap, AMapMarker, AMapLngLat, AMapPolyline } from './amapTypes'
 import './amapTypes' // ensure global Window.AMap declaration is loaded
 
 /* ── 工具函数 ──────────────────────────────────────────────────────────── */
-function gcjPosition(lng: number, lat: number): [number, number] {
+/** 高德 POI 搜索返回 GCJ02，不需要转换；GPS/OSM 是 WGS84 需要转换 */
+function toGcj(lng: number, lat: number, source?: string | null): [number, number] {
+  if (source === 'amap') return [lng, lat] // 已是 GCJ02
   return wgs84ToGcj02(lng, lat)
+}
+/** 路线数据来自高德路线规划 API，已是 GCJ02 */
+function toGcjForce(lng: number, lat: number): [number, number] {
+  return [lng, lat]
 }
 
 function loadAmapScript(apiKey: string): Promise<void> {
@@ -81,7 +87,7 @@ export const MapViewAmap = memo(function MapViewAmap({
     loadAmapScript(apiKey).then(() => {
       if (!alive || !containerRef.current || !window.AMap) return
       const AMap = window.AMap
-      const [cLng, cLat] = gcjPosition(center[1], center[0])
+      const [cLng, cLat] = wgs84ToGcj02(center[1], center[0])
       mapRef.current = new AMap.Map(containerRef.current, {
         zoom,
         center: [cLng, cLat],
@@ -115,7 +121,7 @@ export const MapViewAmap = memo(function MapViewAmap({
     const allPlaces = dayPlaces.length > 0 ? dayPlaces : places
     allPlaces.forEach(place => {
       if (place.lat == null || place.lng == null) return
-      const [gcjLng, gcjLat] = gcjPosition(place.lng, place.lat)
+      const [gcjLng, gcjLat] = toGcj(place.lng, place.lat, place.source)
       const isSelected = place.id === selectedPlaceId
       const size = isSelected ? 36 : 28
       const color = isSelected ? '#6366f1' : '#3b82f6'
@@ -159,7 +165,7 @@ export const MapViewAmap = memo(function MapViewAmap({
     activeRoute.forEach((segment) => {
       // route data is [lat, lng] (GeoJSON order) — swap to (lng, lat) for AMap
       const path = segment.map(([lat, lng]) => {
-        const [gcjLng, gcjLat] = gcjPosition(lng, lat)
+        const [gcjLng, gcjLat] = toGcjForce(lng, lat)
         return new AMap.LngLat(gcjLng, gcjLat)
       })
       const polyline = new AMap.Polyline({
@@ -197,7 +203,7 @@ export const MapViewAmap = memo(function MapViewAmap({
     const allPlaces = dayPlaces.length > 0 ? dayPlaces : places
     const selected = allPlaces.find(p => p.id === selectedPlaceId)
     if (selected?.lat != null && selected?.lng != null) {
-      const [gcjLng, gcjLat] = gcjPosition(selected.lng, selected.lat)
+      const [gcjLng, gcjLat] = toGcj(selected.lng, selected.lat, selected.source)
       const map = mapRef.current
       map.setZoomAndCenter(16, new (window.AMap!.LngLat)(gcjLng, gcjLat))
     }
