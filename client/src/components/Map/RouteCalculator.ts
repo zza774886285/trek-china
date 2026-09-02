@@ -327,8 +327,9 @@ async function calculateRouteWithAmap(
   const urlMap = { driving: AMAP_DRIVING_URL, walking: AMAP_WALKING_URL, riding: AMAP_RIDING_URL }
   const apiUrl = urlMap[mode]
 
-  const origin = wgs84ToAmapCoord(waypoints[0].lng, waypoints[0].lat)
-  const destination = wgs84ToAmapCoord(waypoints[waypoints.length - 1].lng, waypoints[waypoints.length - 1].lat)
+  // 中国版: 高德搜索结果已是 GCJ02，直接传给高德路线 API
+  const origin = `${waypoints[0].lng},${waypoints[0].lat}`
+  const destination = `${waypoints[waypoints.length - 1].lng},${waypoints[waypoints.length - 1].lat}`
 
   const params = new URLSearchParams({
     key: serviceKey,
@@ -341,7 +342,7 @@ async function calculateRouteWithAmap(
   // 途经点: 从第 2 个到倒数第 2 个
   if (waypoints.length > 2) {
     const viaStr = waypoints.slice(1, -1)
-      .map(p => wgs84ToAmapCoord(p.lng, p.lat))
+      .map(p => `${p.lng},${p.lat}`)
       .join(';')
     params.set('waypoints', viaStr)
   }
