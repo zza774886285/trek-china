@@ -49,6 +49,11 @@ export class ReservationsController {
     private readonly reservations: ReservationsService,
   ) {}
 
+  @Get()
+  list(@CurrentUser() user: User, @Param('tripId') tripId: string) {
+    return { reservations: this.reservations.list(tripId) };
+  }
+
   @RequirePermission('reservation_edit')
   @Post()
   create(

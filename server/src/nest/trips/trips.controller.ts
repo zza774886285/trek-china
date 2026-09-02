@@ -67,6 +67,11 @@ export class TripsController {
   // so a new dependency does not touch the ones that never reach the ICS route.
   constructor(private readonly trips: TripsService, private readonly audit: AuditService, private readonly env: RuntimeEnvService, private readonly calendar: CalendarService, private readonly readModel: TripReadModelService, private readonly storage: StorageService) {}
 
+  @Get()
+  list(@CurrentUser() user: User, @Query('archived') archived?: string) {
+    return { trips: this.trips.list(user.id, archived === '1' ? 1 : 0) };
+  }
+
   /**
    * Where "open TREK straight in my trip" lands. Declared above @Get(':id') —
    * a literal segment below it would never be reached.
