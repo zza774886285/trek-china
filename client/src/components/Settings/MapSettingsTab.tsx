@@ -159,7 +159,7 @@ function slotStyle(provider: Provider, s: { mapbox_style?: string; maplibre_styl
  * 3D buildings and satellite texture in a way open ocean cannot — it is not a user setting,
  * and no map opens here: each map frames itself on its own places.
  */
-const PREVIEW_CENTER: [number, number] = [48.8566, 2.3522]
+const PREVIEW_CENTER: [number, number] = [39.9042, 116.4074]
 const PREVIEW_ZOOM = 16
 
 export default function MapSettingsTab(): React.ReactElement {

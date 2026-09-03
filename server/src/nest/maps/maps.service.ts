@@ -77,14 +77,9 @@ function logKeyFailure(label: string, status: number, userId: number, source: Ap
 }
 
 function googleFetch(rawEndpoint: string, label: string, init?: RequestInit): Promise<Response> {
-  const endpoint = placesEndpoint(rawEndpoint);
-  googleApiCallCount++;
-  console.debug(`[Google API] #${googleApiCallCount} ${label} → ${endpoint}`);
-  const referer = readEnv().app.appUrl ? getAppUrl() : undefined;
-  return fetch(endpoint, {
-    ...init,
-    headers: { ...(referer ? { Referer: referer } : {}), ...((init?.headers as Record<string, string>) ?? {}) },
-  });
+  // Google Places API disabled in China fork — return 403 to trigger graceful fallbacks.
+  console.debug(`[Google API] DISABLED ${label}`);
+  return Promise.resolve(new Response(JSON.stringify({ error: 'Google Places API disabled' }), { status: 403, headers: { 'Content-Type': 'application/json' } }));
 }
 
 // ── Interfaces ───────────────────────────────────────────────────────────────

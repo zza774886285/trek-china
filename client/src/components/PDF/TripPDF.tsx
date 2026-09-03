@@ -525,10 +525,10 @@ export async function downloadTripPDF({ trip, days, places, assignments = {}, ca
 <meta charset="UTF-8">
 <base href="${window.location.origin}/">
 <title>${escHtml(trip?.title || tr('pdf.travelPlan'))}</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>/* Local Noto Sans SC font — self-hosted via fontsource */ body { font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; }</style>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Poppins', sans-serif; background: #fff; color: #1e293b; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #fff; color: #1e293b; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   svg { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
   /* Footer on every printed page */

@@ -150,11 +150,8 @@ export class AuthService {
     const get = (key: string) =>
       this.db.get<{ value: string }>("SELECT value FROM app_settings WHERE key = ?", key)?.value ?? null;
 
-    // Passkey login is independent of the password/OIDC "new keys" probe, so it
-    // must be resolved OUTSIDE the branch below — otherwise on a fresh install
-    // that never touched the password/OIDC toggles it would silently read false
-    // even after an admin enabled it. Default OFF (opt-in).
-    const passkey_login = get('passkey_login') === 'true';
+    // Passkey login disabled in China fork — no WebAuthn dependency.
+    const passkey_login = false;
 
     const hasNewKeys = ['password_login', 'password_registration', 'oidc_login', 'oidc_registration']
       .some(k => get(k) !== null);
@@ -234,12 +231,8 @@ export class AuthService {
     // One directory deeper than the legacy src/services location — the extra
     // '../' keeps resolving to the workspace package.json.
     const version: string = readEnv().app.appVersion ?? require('../../../package.json').version;
-    // Asked through the same resolver the search itself uses, so the client can
-    // never show Google features that rest on a key this caller does not get —
-    // nor hide them from a member who does have one (#1939). Unauthenticated the
-    // question is only about the instance, which is the first two steps of the
-    // chain; id 0 matches no row.
-    const hasGoogleKey = !!resolveApiKey(this.db, 'maps_api_key', authenticatedUser?.id ?? 0, readEnv().maps.placesApiKey).key;
+    // Google Places API not used in China fork — always false.
+    const hasGoogleKey = false;
     const oidcDisplayName = readEnv().oidc.displayName ||
       this.db.get<{ value: string }>("SELECT value FROM app_settings WHERE key = 'oidc_display_name'")?.value || null;
     const oidcConfigured = !!(

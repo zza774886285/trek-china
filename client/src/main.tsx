@@ -2,13 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
 import App from './App'
-// Self-hosted Poppins (bundled, same-origin) so the app font can't be blocked by
-// ad/tracker blockers the way the Google Fonts CDN can.
-import '@fontsource/poppins/300.css'
-import '@fontsource/poppins/400.css'
-import '@fontsource/poppins/500.css'
-import '@fontsource/poppins/600.css'
-import '@fontsource/poppins/700.css'
+// Self-hosted Noto Sans SC (bundled, same-origin) for Chinese locale support.
+import '@fontsource/noto-sans-sc/300.css'
+import '@fontsource/noto-sans-sc/400.css'
+import '@fontsource/noto-sans-sc/500.css'
+import '@fontsource/noto-sans-sc/600.css'
+import '@fontsource/noto-sans-sc/700.css'
 // MuseoModerno for the login wordmark — same reasoning, it used to come from the
 // Google Fonts CDN via a render-blocking <link> in index.html.
 import '@fontsource/museomoderno/400.css'

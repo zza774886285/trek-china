@@ -84,15 +84,8 @@ export default function LoginPage(): React.ReactElement {
     handlePasskeyLogin,
   } = useLogin();
 
-  const oidcButtonShown = !!(appConfig?.oidc_configured && appConfig?.oidc_login && !oidcOnly);
-  const passkeyAvailable = !!(
-    appConfig?.passkey_login &&
-    appConfig?.passkey_configured &&
-    !oidcOnly &&
-    mode === 'login' &&
-    !mfaStep &&
-    !passwordChangeStep
-  );
+  const oidcButtonShown = false; // China fork: no OIDC
+  const passkeyAvailable = false; // China fork: no passkey
 
   const inputBase: React.CSSProperties = {
     width: '100%',

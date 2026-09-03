@@ -258,24 +258,14 @@ export class PlacesController {
     return this.importList('google', user, tripId, body, socketId);
   }
 
-  @Post('import/naver-list')
-  async importNaver(@CurrentUser() user: User, @Param('tripId') tripId: string, @Body() body: PlaceImportListDto, @Headers('x-socket-id') socketId?: string) {
-    return this.importList('naver', user, tripId, body, socketId);
-  }
-
-  /** Shared google/naver list import — identical flow, different provider + error string. */
-  private async importList(provider: 'google' | 'naver', user: User, tripId: string, body: PlaceImportListDto, socketId?: string) {
+  /** Google list import only — Naver import removed in China fork. */
+  private async importList(provider: 'google', user: User, tripId: string, body: PlaceImportListDto, socketId?: string) {
     const trip = this.requireTrip(tripId, user);
     this.requireEdit(trip, user);
     const { url, enrich } = body;
-    // Opt-in: re-resolve each imported place via the Places API to fill in
-    // photo / address / website / phone and persist a google_place_id (#886).
     const opts = { enrich: parseBool(enrich, false), userId: user.id };
-    const label = provider === 'google' ? 'Google' : 'Naver';
     try {
-      const result = provider === 'google'
-        ? await this.places.importGoogleList(tripId, url, opts)
-        : await this.places.importNaverList(tripId, url, opts);
+      const result = await this.places.importGoogleList(tripId, url, opts);
       if ('error' in result) {
         throw new HttpException({ error: result.error }, result.status);
       }
@@ -285,8 +275,8 @@ export class PlacesController {
       return { places: result.places, count: result.places.length, listName: result.listName, skipped: result.skipped };
     } catch (err: unknown) {
       if (err instanceof HttpException) throw err;
-      console.error(`[Places] ${label} list import error:`, err instanceof Error ? err.message : err);
-      throw new HttpException({ error: `Failed to import ${label} Maps list. Make sure the list is shared publicly.` }, 400);
+      console.error('[Places] Google list import error:', err instanceof Error ? err.message : err);
+      throw new HttpException({ error: 'Failed to import Google Maps list. Make sure the list is shared publicly.' }, 400);
     }
   }
 
