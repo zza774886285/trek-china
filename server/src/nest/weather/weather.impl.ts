@@ -199,6 +199,19 @@ interface QWeatherHistorical {
   };
 }
 
+// ── GeoAPI: 经纬度 → 城市ID ────────────────────────────────────────────
+
+async function geoLookup(lng: string, lat: string): Promise<string | null> {
+  try {
+    const url = `https://geoapi.qweather.com/v2/city/lookup?location=${lng},${lat}&key=${QWEATHER_KEY}`;
+    const response = await fetch(url, { signal: AbortSignal.timeout(WEATHER_TIMEOUT_MS) });
+    const data = await readCappedJson<{ location?: Array<{ id: string }> }>(response, MAX_WEATHER_BYTES);
+    return data?.location?.[0]?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
 async function qweatherGet<T>(path: string, params: Record<string, string>): Promise<T> {
   const qs = new URLSearchParams({ ...params, key: QWEATHER_KEY });
   const url = `${QWEATHER_API}${path}?${qs}`;
@@ -272,12 +285,13 @@ async function _getWeatherImpl(
     }
   }
 
-  // Historical: try QWeather historical API
+  // Historical: try QWeather historical API (needs city ID, not coordinates)
   if (diffDays < -1) {
     const histDate = date.replace(/-/g, '');
     try {
+      const cityId = await geoLookup(lng, lat);
       const hist = await qweatherGet<QWeatherHistorical>('/v7/historical/weather', {
-        location: `${lng},${lat}`,
+        location: cityId || `${lng},${lat}`,
         date: histDate,
       });
       if (hist.code === '200' && hist.weatherDaily) {
