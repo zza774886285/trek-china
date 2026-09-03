@@ -7,11 +7,7 @@ import type { AMapMap, AMapMarker, AMapLngLat, AMapPolyline } from './amapTypes'
 import './amapTypes' // ensure global Window.AMap declaration is loaded
 
 /* ── 工具函数 ──────────────────────────────────────────────────────────── */
-/** 高德 POI 搜索返回 GCJ02，不需要转换；GPS/OSM 是 WGS84 需要转换 */
-function toGcj(lng: number, lat: number, osmId?: string | null): [number, number] {
-  if (osmId?.startsWith('amap:')) return [lng, lat] // 已是 GCJ02
-  return wgs84ToGcj02(lng, lat)
-}
+// 服务器统一存储 WGS-84（高德POI搜索结果也已转为WGS-84），客户端无条件转 GCJ-02
 
 
 function loadAmapScript(apiKey: string): Promise<void> {
@@ -118,7 +114,7 @@ export const MapViewAmap = memo(function MapViewAmap({
     const allPlaces = dayPlaces.length > 0 ? dayPlaces : places
     allPlaces.forEach(place => {
       if (place.lat == null || place.lng == null) return
-      const [gcjLng, gcjLat] = toGcj(place.lng, place.lat, place.osm_id)
+      const [gcjLng, gcjLat] = wgs84ToGcj02(place.lng, place.lat)
       const isSelected = place.id === selectedPlaceId
       const size = isSelected ? 36 : 28
       const color = isSelected ? '#6366f1' : '#3b82f6'
@@ -201,7 +197,7 @@ export const MapViewAmap = memo(function MapViewAmap({
     const allPlaces = dayPlaces.length > 0 ? dayPlaces : places
     const selected = allPlaces.find(p => p.id === selectedPlaceId)
     if (selected?.lat != null && selected?.lng != null) {
-      const [gcjLng, gcjLat] = toGcj(selected.lng, selected.lat, selected.osm_id)
+      const [gcjLng, gcjLat] = wgs84ToGcj02(selected.lng, selected.lat)
       const map = mapRef.current
       map.setZoomAndCenter(16, new (window.AMap!.LngLat)(gcjLng, gcjLat))
     }

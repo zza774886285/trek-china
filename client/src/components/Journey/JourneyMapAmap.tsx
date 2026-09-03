@@ -8,11 +8,7 @@ import type { AMapMap, AMapMarker, AMapPolyline } from '../Map/amapTypes'
 import '../Map/amapTypes' // ensure global Window.AMap declaration is loaded
 
 /* ── 工具函数 ──────────────────────────────────────────────────────────── */
-/** 高德来源已是 GCJ02，跳过转换 */
-function toGcj(lng: number, lat: number, osmId?: string | null): [number, number] {
-  if (osmId?.startsWith('amap:')) return [lng, lat]
-  return wgs84ToGcj02(lng, lat)
-}
+// 服务器统一存储 WGS-84（高德POI搜索结果也已转为WGS-84），客户端无条件转 GCJ-02
 
 function loadAmapScript(apiKey: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -192,7 +188,7 @@ function JourneyMapAmap(
     // 绘制 trail
     if (trail && trail.length > 1) {
       const path = trail.map(p => {
-        const [gcjLng, gcjLat] = toGcj(p.lng, p.lat)
+        const [gcjLng, gcjLat] = wgs84ToGcj02(p.lng, p.lat)
         return new AMap.LngLat(gcjLng, gcjLat)
       })
       const polyline = new AMap.Polyline({
@@ -214,7 +210,7 @@ function JourneyMapAmap(
       for (const track of tracks) {
         if (track.points.length < 2) continue
         const path = track.points.map(([lat, lng]) => {
-          const [gcjLng, gcjLat] = toGcj(lng, lat)
+          const [gcjLng, gcjLat] = wgs84ToGcj02(lng, lat)
           return new AMap.LngLat(gcjLng, gcjLat)
         })
         // 白色底边
@@ -243,7 +239,7 @@ function JourneyMapAmap(
 
     // 绘制 markers
     items.forEach(item => {
-      const [gcjLng, gcjLat] = toGcj(item.lng, item.lat, item.osm_id)
+      const [gcjLng, gcjLat] = wgs84ToGcj02(item.lng, item.lat)
       const isSelected = item.id === activeMarkerId
       const html = markerHtml(item.dayColor, item.dayLabel, isSelected)
 
