@@ -1478,7 +1478,7 @@ export class MapsService {
     locationBias?: { lat: number; lng: number; radius?: number },
     city?: string,
   ): Promise<{ places: Record<string, unknown>[]; source: string }> {
-    const params = new URLSearchParams({ key: amapServiceKey, keywords: query, output: 'json', offset: '10', extensions: 'all' });
+    const params = new URLSearchParams({ key: amapServiceKey, keywords: query, output: 'json', offset: '25', page: '1', extensions: 'all' });
     if (city) params.set('city', city);
     // 有位置偏见时按距离排序
     if (locationBias) {
@@ -1487,7 +1487,7 @@ export class MapsService {
     }
     const response = await fetch(`https://restapi.amap.com/v3/place/text?${params.toString()}`);
     if (!response.ok) throw new Error(`AMap POI API error: ${response.status}`);
-    const data = await response.json() as { status: string; info: string; pois?: Array<{ name: string; address: string; location: string; poiid: string; tel?: string; website?: string; type: string }> };
+    const data = await response.json() as { status: string; info: string; pois?: Array<{ name: string; address: string; location: string; poiid: string; tel?: string; website?: string; type: string; pname?: string; cityname?: string; adname?: string }> };
     if (data.status !== '1') throw new Error(`AMap POI error: ${data.info}`);
     const places = (data.pois || []).map(poi => {
       const [lng, lat] = poi.location.split(',').map(Number);
@@ -1498,11 +1498,14 @@ export class MapsService {
         : [];
       // 自动生成高德地图链接
       const amapLink = `https://uri.amap.com/marker?position=${lng},${lat}&name=${encodeURIComponent(poi.name)}`;
+      // 拼接完整地址：省+市+区+详细地址
+      const addrParts = [poi.pname, poi.cityname, poi.adname, poi.address].filter(Boolean);
+      const fullAddress = [...new Set(addrParts)].join('');
       return {
         google_place_id: null, google_ftid: null,
         osm_id: `amap:${poi.poiid}`,
         name: poi.name,
-        address: poi.address || '',
+        address: fullAddress || poi.address || '',
         lat, lng,
         rating: biz?.rating ? Number(biz.rating) : null,
         cost: biz?.cost ? Number(biz.cost) : null,
