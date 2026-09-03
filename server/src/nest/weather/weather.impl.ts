@@ -412,9 +412,42 @@ async function _getDetailedWeatherImpl(
   }
 
   // Get forecast + hourly
-  const forecast = await qweatherGet<QWeatherForecast>('/v7/weather/3d', { location: `${lng},${lat}` });
+  let forecast: QWeatherForecast;
+  try {
+    forecast = await qweatherGet<QWeatherForecast>('/v7/weather/3d', { location: `${lng},${lat}` });
+  } catch {
+    forecast = { code: 'error', daily: null } as any;
+  }
+
+  // If QWeather fails and date is historical, try Open-Meteo Archive
+  if ((forecast.code !== '200' || !forecast.daily) && diffDays < -1) {
+    try {
+      const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${date}&end_date=${date}&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum&timezone=auto`;
+      const response = await fetch(url, { signal: AbortSignal.timeout(WEATHER_TIMEOUT_MS) });
+      const data = await readCappedJson<{ daily?: { time?: string[]; temperature_2m_max?: number[]; temperature_2m_min?: number[]; weathercode?: number[]; precipitation_sum?: number[] } }>(response, MAX_WEATHER_BYTES);
+      if (data?.daily?.time?.length && data.daily.temperature_2m_max?.[0] != null) {
+        const tMax = data.daily.temperature_2m_max[0];
+        const tMin = data.daily.temperature_2m_min![0];
+        const code = data.daily.weathercode?.[0];
+        const main = WMO_MAP[code!] || estimateCondition((tMax + tMin) / 2, data.daily.precipitation_sum?.[0] || 0);
+        const result: WeatherResult = {
+          temp: Math.round((tMax + tMin) / 2),
+          temp_max: Math.round(tMax),
+          temp_min: Math.round(tMin),
+          main,
+          description: WMO_DESCRIPTION_ZH[code!] || '',
+          type: 'forecast',
+        };
+        setCache(ck, result, TTL_CLIMATE_MS);
+        return result;
+      }
+    } catch {
+      // Open-Meteo also failed
+    }
+  }
+
   if (forecast.code !== '200' || !forecast.daily) {
-    throw new ApiError(502, `QWeather forecast error: ${forecast.code}`);
+    return { temp: 0, main: '', description: '', type: '', error: 'no_forecast' };
   }
 
   const day = forecast.daily.find(d => d.fxDate === date);
