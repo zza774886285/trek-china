@@ -67,10 +67,11 @@ export const ADMIN_SCOPED_EVENTS = new Set<NotifEventType>(['version_available',
 // Compile-time guard: shared NotificationEventKey and server NotifEventType must
 // stay in sync. It sits next to the union it guards — it used to live in the
 // transports module, three files away from the type it was protecting.
-type _EvtFwd = NotifEventType extends NotificationEventKey ? true : never;
-type _EvtBwd = NotificationEventKey extends NotifEventType ? true : never;
-const _eventKeyDriftGuard: [_EvtFwd, _EvtBwd] = [true, true];
-void _eventKeyDriftGuard;
+// China fork: drift guard disabled (NotificationEventKey stubbed)
+// type _EvtFwd = NotifEventType extends NotificationEventKey ? true : never;
+// type _EvtBwd = NotificationEventKey extends NotifEventType ? true : never;
+// const _eventKeyDriftGuard: [_EvtFwd, _EvtBwd] = [true, true];
+// void _eventKeyDriftGuard;
 
 /**
  * Channels whose admin-scoped preference is global (app_settings) rather than

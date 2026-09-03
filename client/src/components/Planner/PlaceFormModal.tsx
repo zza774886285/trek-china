@@ -307,7 +307,8 @@ function usePlaceFormModal(props: PlaceFormModalProps) {
           return
         }
       }
-      const result = await mapsApi.search(mapsSearch, language)
+      const city = tripId ? await mapsApi.getTripCity(Number(tripId)).catch(() => null) : null
+      const result = await mapsApi.search(mapsSearch, language, city || undefined)
       setMapsResults(result.places || [])
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, t('places.mapsSearchError')))
@@ -761,6 +762,31 @@ export default function PlaceFormModal(props: PlaceFormModalProps) {
                 >
                   <div className="font-medium text-sm">{result.name}</div>
                   <div className="text-xs text-content-muted truncate">{result.address}</div>
+                  <div className="flex items-center gap-2 mt-0.5 text-xs text-content-muted">
+                      {result.rating && (
+                        <span className="flex items-center gap-0.5">
+                          <span className="text-amber-500">★</span>
+                          {String(result.rating)}
+                        </span>
+                      )}
+                      {result.cost && <span>¥{String(result.cost)}/人</span>}
+                      {result.tel && <span className="truncate">{String(result.tel)}</span>}
+                      {result.pois && (() => {
+                        const lng = result.pois[0]?.longitude || result.lng;
+                        const lat = result.pois[0]?.latitude || result.lat;
+                        const name = encodeURIComponent(result.name || '');
+                        return (
+                          <a
+                            href={`https://uri.amap.com/marker?position=${lng},${lat}&name=${name}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-blue-500 hover:underline ml-auto"
+                          >高德↗</a>
+                        );
+                      })()}
+                    </div>
+
                 </button>
               ))}
             </div>

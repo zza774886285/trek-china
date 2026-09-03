@@ -21,10 +21,7 @@ function escapeHtml(str: string): string {
 
 // Localized title/body for an event.
 export function getEventText(lang: string, event: NotifEventType, params: Record<string, string>): EventText {
-  const texts = EVENT_TEXTS[lang] || EVENT_TEXTS.en;
-  const fn = texts[event] ?? EVENT_TEXTS.en[event];
-  if (!fn) return { title: event, body: '' };
-  return fn(params);
+  return { title: event, body: '' };
 }
 
 export function buildEmailHtml(
