@@ -83,6 +83,14 @@ function runMigrations(db: Database.Database): void {
     }
   }
 
+  /** ALTER TABLE ADD COLUMN that silently skips if the column already exists. */
+  function addColumnIfMissing(table: string, column: string, def: string) {
+    const has = db.prepare(`SELECT 1 FROM pragma_table_info(?) WHERE name = ?`).get(table, column);
+    if (!has) {
+      db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${def}`);
+    }
+  }
+
   type Migration = (() => void) | { raw: () => void };
   const migrations: Migration[] = [
     () => db.exec('ALTER TABLE users ADD COLUMN unsplash_api_key TEXT'),
@@ -4198,9 +4206,15 @@ function runMigrations(db: Database.Database): void {
           migration.raw();
           db.prepare('UPDATE schema_version SET version = ?').run(i + 1);
         }
-      } catch (err) {
-        console.error(`[migrations] FATAL: Migration ${i + 1} failed, rolled back:`, err);
-        process.exit(1);
+      } catch (err: any) {
+        if (err?.message?.includes('duplicate column name')) {
+          console.warn(`[migrations] Migration ${i + 1}: column already exists, skipping`);
+          // Still bump version so we don't retry next boot
+          db.prepare('UPDATE schema_version SET version = ?').run(i + 1);
+        } else {
+          console.error(`[migrations] FATAL: Migration ${i + 1} failed, rolled back:`, err);
+          process.exit(1);
+        }
       }
     }
     console.log(`[DB] Migrations complete — schema version ${migrations.length}`);
