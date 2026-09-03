@@ -1,0 +1,38 @@
+name: Build Docker Image
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build client
+        run: npm ci --workspace=client && npm run build --workspace=client
+
+      - name: Build shared
+        run: npm run build --workspace=shared
+
+      - name: Build server
+        run: npm run build --workspace=server
+
+      - name: Build Docker image
+        run: |
+          docker build -t trek-china:latest -f Dockerfile.china .
+
+      - name: Save image
+        run: docker save trek-china:latest | gzip > trek-china.tar.gz
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trek-china
+          path: trek-china.tar.gz
+          retention-days: 3
