@@ -55,6 +55,30 @@ const ICON_MAP: Record<string, string> = {
   '900': 'Clear', '901': 'Clouds',
 };
 
+// ── Open-Meteo WMO code mappings (fallback) ──────────────────────────
+
+const WMO_MAP: Record<number, string> = {
+  0: 'Clear', 1: 'Clear', 2: 'Clouds', 3: 'Clouds',
+  45: 'Fog', 48: 'Fog',
+  51: 'Drizzle', 53: 'Drizzle', 55: 'Drizzle', 56: 'Drizzle', 57: 'Drizzle',
+  61: 'Rain', 63: 'Rain', 65: 'Rain', 66: 'Rain', 67: 'Rain',
+  71: 'Snow', 73: 'Snow', 75: 'Snow', 77: 'Snow',
+  80: 'Rain', 81: 'Rain', 82: 'Rain',
+  85: 'Snow', 86: 'Snow',
+  95: 'Thunderstorm', 96: 'Thunderstorm', 99: 'Thunderstorm',
+};
+
+const WMO_DESCRIPTION_ZH: Record<number, string> = {
+  0: '晴', 1: '大部晴朗', 2: '局部多云', 3: '多云',
+  45: '雾', 48: '雾凇',
+  51: '小雨', 53: '中雨', 55: '大雨', 56: '冻雨', 57: '强冻雨',
+  61: '小雨', 63: '中雨', 65: '大雨', 66: '冻雨', 67: '强冻雨',
+  71: '小雪', 73: '中雪', 75: '大雪', 77: '雪粒',
+  80: '阵雨', 81: '中阵雨', 82: '强阵雨',
+  85: '小阵雪', 86: '强阵雪',
+  95: '雷暴', 96: '雷暴伴冰雹', 99: '强雷暴伴冰雹',
+};
+
 function iconToMain(icon: string): string {
   return ICON_MAP[icon] || 'Clouds';
 }
@@ -309,12 +333,40 @@ async function _getWeatherImpl(
         return result;
       }
     } catch {
-      // Historical API may not be available on free tier, fall through
+    // Historical API may not be available on free tier, fall through to Open-Meteo
     }
-  }
+    }
 
-  // Far-future or fallback: estimate from climate averages (placeholder)
-  return { temp: 0, main: '', description: '', type: '', error: 'no_forecast' };
+    // ── Open-Meteo fallback for historical dates ──────────────────────────
+    if (diffDays < -1) {
+    try {
+    const dateStr = targetDate.toISOString().slice(0, 10);
+    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${dateStr}&end_date=${dateStr}&daily=temperature_2m_max,temperature_2m_min,weathercode,precipitation_sum&timezone=auto`;
+    const response = await fetch(url, { signal: AbortSignal.timeout(WEATHER_TIMEOUT_MS) });
+    const data = await readCappedJson<{ daily?: { time?: string[]; temperature_2m_max?: number[]; temperature_2m_min?: number[]; weathercode?: number[]; precipitation_sum?: number[] } }>(response, MAX_WEATHER_BYTES);
+    if (data?.daily?.time?.length && data.daily.temperature_2m_max?.[0] != null) {
+      const tMax = data.daily.temperature_2m_max[0];
+      const tMin = data.daily.temperature_2m_min![0];
+      const code = data.daily.weathercode?.[0];
+      const main = WMO_MAP[code!] || estimateCondition((tMax + tMin) / 2, data.daily.precipitation_sum?.[0] || 0);
+      const result: WeatherResult = {
+        temp: Math.round((tMax + tMin) / 2),
+        temp_max: Math.round(tMax),
+        temp_min: Math.round(tMin),
+        main,
+        description: WMO_DESCRIPTION_ZH[code!] || '',
+        type: 'forecast',
+      };
+      setCache(ck, result, TTL_CLIMATE_MS);
+      return result;
+    }
+    } catch {
+    // Open-Meteo also failed, return empty
+    }
+    }
+
+    // Far-future or fallback: estimate from climate averages (placeholder)
+    return { temp: 0, main: '', description: '', type: '', error: 'no_forecast' };
 }
 
 export async function getWeather(
