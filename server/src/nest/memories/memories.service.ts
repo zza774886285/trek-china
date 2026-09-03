@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import type { Response } from 'express';
 import { ImmichService } from './immich.service';
 import { SynologyService } from './synology.service';
+import { MtphotosService } from './mtphotos.service';
 import { UnifiedMemoriesService } from './unified-memories.service';
 import { MemoriesAccessService } from './memories-access.service';
 import type { Selection } from './memories.helpers';
@@ -21,6 +22,7 @@ export class MemoriesService {
     private readonly unified: UnifiedMemoriesService,
     private readonly immich: ImmichService,
     private readonly synology: SynologyService,
+    private readonly mtphotos: MtphotosService,
     private readonly access: MemoriesAccessService,
   ) {}
 
@@ -154,5 +156,39 @@ export class MemoriesService {
 
   synologyStreamAsset(res: Response, userId: number, ownerId: number, photoId: string, kind: 'thumbnail' | 'original', size: string, passphrase?: string) {
     return this.synology.streamSynologyAsset(res, userId, ownerId, photoId, kind, size, passphrase);
+  }
+
+  // ── MT Photos ─────────────────────────────────────────────────────────────
+  mtphotosGetSettings(userId: number) {
+    const settings = this.mtphotos.getConnectionSettings(userId);
+    return { success: true as const, data: settings };
+  }
+
+  mtphotosSaveSettings(userId: number, url: string, username: string, password: string) {
+    const result = this.mtphotos.saveSettings(userId, url, username, password);
+    if (!result.success) {
+      return { error: { status: 400, message: result.error || 'Failed to save settings' } } as const;
+    }
+    return { success: true as const, data: { success: true } };
+  }
+
+  async mtphotosGetStatus(userId: number) {
+    return this.mtphotos.getConnectionStatus(userId);
+  }
+
+  async mtphotosTestConnection(url: string, username: string, password: string) {
+    return this.mtphotos.testConnection(url, username, password);
+  }
+
+  async mtphotosSearchPhotos(userId: number, from: string | undefined, to: string | undefined, page: number, size: number) {
+    return this.mtphotos.searchPhotos(userId, from, to, page, size);
+  }
+
+  async mtphotosGetAssetInfo(userId: number, assetId: string) {
+    return this.mtphotos.getAssetInfo(userId, assetId);
+  }
+
+  async mtphotosStreamAsset(res: Response, userId: number, assetId: string, kind: 'thumbnail' | 'original') {
+    return this.mtphotos.streamAsset(res, userId, assetId, kind);
   }
 }

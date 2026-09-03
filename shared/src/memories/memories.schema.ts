@@ -70,6 +70,27 @@ export const synologySearchSchema = z.looseObject({
   size: looseNumber,
 });
 
+// ── MT Photos ────────────────────────────────────────────────────────────
+
+export const mtphotosSettingsSchema = z.looseObject({
+  mtphotos_url: optionalText,
+  mtphotos_username: optionalText,
+  mtphotos_password: optionalText,
+});
+
+export const mtphotosTestSchema = z.looseObject({
+  mtphotos_url: optionalText,
+  mtphotos_username: optionalText,
+  mtphotos_password: optionalText,
+});
+
+export const mtphotosSearchSchema = z.looseObject({
+  from: optionalText,
+  to: optionalText,
+  size: looseNumber,
+  page: looseNumber,
+});
+
 // ── Unified (provider-agnostic trip photo surface) ────────────────────────
 
 /** One provider's picked assets. Mirrors the `Selection` type the services take. */
@@ -110,6 +131,9 @@ export type ImmichSearchInput = z.infer<typeof immichSearchSchema>;
 export type SynologySettingsInput = z.infer<typeof synologySettingsSchema>;
 export type SynologyTestInput = z.infer<typeof synologyTestSchema>;
 export type SynologySearchInput = z.infer<typeof synologySearchSchema>;
+export type MtphotosSettingsInput = z.infer<typeof mtphotosSettingsSchema>;
+export type MtphotosTestInput = z.infer<typeof mtphotosTestSchema>;
+export type MtphotosSearchInput = z.infer<typeof mtphotosSearchSchema>;
 export type PhotoSelectionInput = z.infer<typeof photoSelectionSchema>;
 export type AddTripPhotosInput = z.infer<typeof addTripPhotosSchema>;
 export type SetTripPhotoSharingInput = z.infer<typeof setTripPhotoSharingSchema>;

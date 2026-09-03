@@ -15,6 +15,7 @@ import { SchedulingModule } from '../scheduling/scheduling.module';
 import { UnifiedMemoriesController } from './unified.controller';
 import { ImmichMemoriesController } from './immich.controller';
 import { SynologyMemoriesController } from './synology.controller';
+import { MtphotosMemoriesController } from './mtphotos.controller';
 import { MemoriesMcp } from './memories.mcp';
 import { AddonsModule } from '../addons/addons.module';
 import { AuditModule } from '../audit/audit.module';
@@ -50,7 +51,7 @@ import { StorageModule } from '../storage/storage.module';
  */
 @Module({
   imports: [NotificationsModule, AddonsModule, AuditModule, TrekPhotosModule, RealtimeModule, SchedulingModule, StorageModule],
-  controllers: [UnifiedMemoriesController, ImmichMemoriesController, SynologyMemoriesController],
+  controllers: [UnifiedMemoriesController, ImmichMemoriesController, SynologyMemoriesController, MtphotosMemoriesController],
   providers: [
     MemoriesService,
     MemoriesAccessService,
