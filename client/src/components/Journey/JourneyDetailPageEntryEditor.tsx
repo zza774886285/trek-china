@@ -633,7 +633,7 @@ export function EntryEditor({ entry, journeyId, tripDates, galleryPhotos, trips,
                         setLocationSearching(true)
                         try {
                           const res = await mapsApi.search(q)
-                          setLocationResults((res.places || []).slice(0, 6).map((p: any) => ({
+                          setLocationResults((res.places || []).slice(0, 10).map((p: any) => ({
                             name: p.name, address: p.address, lat: Number(p.lat), lng: Number(p.lng),
                           })))
                         } catch { setLocationResults([]) }

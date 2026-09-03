@@ -7,6 +7,7 @@ import type {
   MapsReverseResult,
   MapsResolveUrlResult,
 } from '@trek/shared';
+import { gcj02ToWgs84 } from '@trek/shared';
 import { readEnv, getAppUrl } from '../../app-config';
 import { safeFetchFollow, SsrfBlockedError } from '../../utils/ssrfGuard';
 import { discardBody, exceedsDeclaredLength, readCappedText } from '../../utils/cappedFetch';
@@ -1490,7 +1491,9 @@ export class MapsService {
     const data = await response.json() as { status: string; info: string; pois?: Array<{ name: string; address: string; location: string; poiid: string; tel?: string; website?: string; type: string; pname?: string; cityname?: string; adname?: string }> };
     if (data.status !== '1') throw new Error(`AMap POI error: ${data.info}`);
     const places = (data.pois || []).map(poi => {
-      const [lng, lat] = poi.location.split(',').map(Number);
+      const [gcjLng, gcjLat] = poi.location.split(',').map(Number);
+      // 高德返回GCJ-02坐标，转为WGS-84存储（客户端地图显示时会再转回GCJ-02）
+      const [lng, lat] = gcj02ToWgs84(gcjLng, gcjLat);
       // extensions=all 返回 biz_ext (rating/cost/opentime) 和 photos
       const biz = (poi as Record<string, unknown>).biz_ext as Record<string, unknown> | undefined;
       const photos = Array.isArray((poi as Record<string, unknown>).photos)
@@ -1727,7 +1730,14 @@ export class MapsService {
         keywords: input,
         datatype: 'all',
         offset: '25',
+        page: '1',
       });
+      // When locationBias is present, pass location for nearby sorting
+      if (locationBias) {
+        const centerLat = (locationBias.low.lat + locationBias.high.lat) / 2;
+        const centerLng = (locationBias.low.lng + locationBias.high.lng) / 2;
+        params.set('location', `${centerLng},${centerLat}`);
+      }
       // inputtips supports an optional `city` parameter to narrow results;
       // when locationBias is present, use the center as a best-effort city hint.
       // Note: inputtips does not accept raw coordinates for city — it expects a
@@ -1803,7 +1813,8 @@ export class MapsService {
         };
         if (data.status !== '1' || !data.pois?.length) return { place: null };
         const poi = data.pois[0];
-        const [lng, lat] = poi.location.split(',').map(Number);
+        const [gcjLng, gcjLat] = poi.location.split(',').map(Number);
+        const [lng, lat] = gcj02ToWgs84(gcjLng, gcjLat);
         const addrParts = [poi.pname, poi.cityname, poi.adname, poi.address].filter(Boolean);
         return {
           place: {
