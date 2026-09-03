@@ -47,7 +47,7 @@ jobs:
           file: Dockerfile.china
           push: true
           tags: |
-            1989400005/trek-china:latest
-            1989400005/trek-china:${{ github.sha }}
+            kirin1989/trek-china:latest
+            kirin1989/trek-china:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
