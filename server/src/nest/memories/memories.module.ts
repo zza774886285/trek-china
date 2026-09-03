@@ -3,6 +3,7 @@ import { MemoriesService } from './memories.service';
 import { MemoriesAccessService } from './memories-access.service';
 import { ImmichService } from './immich.service';
 import { SynologyService } from './synology.service';
+import { MtphotosService } from './mtphotos.service';
 import { UnifiedMemoriesService } from './unified-memories.service';
 import { PhotoResolverService } from './photo-resolver.service';
 import { PhotoCaptureBackfillService } from './photo-capture-backfill.service';
@@ -23,6 +24,7 @@ import { PHOTO_PROVIDERS } from './photo-provider';
 import { PhotoProviderRegistry } from './photo-provider.registry';
 import { ImmichPhotoProvider } from './providers/immich.provider';
 import { SynologyPhotoProvider } from './providers/synology.provider';
+import { MtphotosPhotoProvider } from './providers/mtphotos.provider';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { StorageModule } from '../storage/storage.module';
 
@@ -54,6 +56,7 @@ import { StorageModule } from '../storage/storage.module';
     MemoriesAccessService,
     ImmichService,
     SynologyService,
+    MtphotosService,
     UnifiedMemoriesService,
     PhotoResolverService,
     PhotoCaptureBackfillService,
@@ -63,12 +66,13 @@ import { StorageModule } from '../storage/storage.module';
     JourneyThumbsJob,
     ImmichPhotoProvider,
     SynologyPhotoProvider,
+    MtphotosPhotoProvider,
     PhotoProviderRegistry,
     MemoriesMcp,
     {
       provide: PHOTO_PROVIDERS,
-      useFactory: (immich: ImmichPhotoProvider, synology: SynologyPhotoProvider) => [immich, synology],
-      inject: [ImmichPhotoProvider, SynologyPhotoProvider],
+      useFactory: (immich: ImmichPhotoProvider, synology: SynologyPhotoProvider, mtphotos: MtphotosPhotoProvider) => [immich, synology, mtphotos],
+      inject: [ImmichPhotoProvider, SynologyPhotoProvider, MtphotosPhotoProvider],
     },
   ],
   exports: [MemoriesAccessService, PhotoResolverService, PhotoCaptureBackfillService, ImmichService, SynologyService, PhotoProviderRegistry],

@@ -4184,6 +4184,20 @@ function runMigrations(db: Database.Database): void {
         db.exec("ALTER TABLE mcp_tokens ADD COLUMN kind TEXT NOT NULL DEFAULT 'mcp'");
       }
     },
+
+    // Migration: MT Photos photo provider — add credential columns to users table
+    () => {
+      const cols = db.prepare("SELECT name FROM pragma_table_info('users')").all() as Array<{ name: string }>;
+      if (!cols.some(c => c.name === 'mtphotos_url')) {
+        db.exec("ALTER TABLE users ADD COLUMN mtphotos_url TEXT");
+      }
+      if (!cols.some(c => c.name === 'mtphotos_username')) {
+        db.exec("ALTER TABLE users ADD COLUMN mtphotos_username TEXT");
+      }
+      if (!cols.some(c => c.name === 'mtphotos_password')) {
+        db.exec("ALTER TABLE users ADD COLUMN mtphotos_password TEXT");
+      }
+    },
   ];
 
   if (currentVersion < migrations.length) {

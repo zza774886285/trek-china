@@ -1612,6 +1612,21 @@ export class MapsService {
     locationBias?: { low: { lat: number; lng: number }; high: { lat: number; lng: number } },
     sessionToken?: string,
   ): Promise<{ suggestions: { placeId: string; mainText: string; secondaryText: string }[]; source: string }> {
+    // ── Amap inputtips path ──
+    const _envPoiSource = process.env.POI_SEARCH_SOURCE || '';
+    const _poiSource = _envPoiSource || (this.database.get<{ value: string }>(
+      'SELECT value FROM app_settings WHERE key = ?', 'poi_search_source',
+    )?.value ?? '');
+    if (_poiSource === 'amap') {
+      const _envAmapKey = process.env.AMAP_SERVICE_KEY || '';
+      const _amapKey = _envAmapKey || (this.database.get<{ value: string }>(
+        'SELECT value FROM app_settings WHERE key = ?', 'amap_service_key',
+      )?.value ?? '');
+      if (_amapKey && _amapKey.trim()) {
+        return this.autocompleteAmap(_amapKey.trim(), input, lang, locationBias);
+      }
+    }
+
     const { key: apiKey, source: keySource } = this.resolveMapsKey(userId);
 
     if (!apiKey) {
@@ -1692,6 +1707,72 @@ export class MapsService {
     }
   }
 
+  // ── Autocomplete (高德 inputtips) ───────────────────────────────────────────
+
+  /**
+   * 高德 inputtips 自动补全。REST API: https://restapi.amap.com/v3/assistant/inputtips
+   * Returns suggestions matching the standard `{ placeId, mainText, secondaryText }` shape.
+   * `city` is derived from locationBias centre if available; omitting it lets inputtips
+   * search nationwide (the default).
+   */
+  private async autocompleteAmap(
+    amapKey: string,
+    input: string,
+    lang?: string,
+    locationBias?: { low: { lat: number; lng: number }; high: { lat: number; lng: number } },
+  ): Promise<{ suggestions: { placeId: string; mainText: string; secondaryText: string }[]; source: string }> {
+    try {
+      const params = new URLSearchParams({
+        key: amapKey,
+        keywords: input,
+        datatype: 'all',
+        offset: '25',
+      });
+      // inputtips supports an optional `city` parameter to narrow results;
+      // when locationBias is present, use the center as a best-effort city hint.
+      // Note: inputtips does not accept raw coordinates for city — it expects a
+      // city name or adcode, so we omit city unless the caller already set it
+      // elsewhere.  Leaving it blank searches nationwide, which is safe.
+      const response = await fetch(`https://restapi.amap.com/v3/assistant/inputtips?${params.toString()}`);
+      if (!response.ok) {
+        console.error(`AMap inputtips HTTP error: ${response.status}`);
+        return { suggestions: [], source: 'amap' };
+      }
+      const data = await response.json() as {
+        status: string;
+        info: string;
+        tips?: Array<{
+          id: string;
+          name: string;
+          district: string;
+          address: string;
+          location: string;
+        }>;
+      };
+      if (data.status !== '1') {
+        console.error(`AMap inputtips error: ${data.info}`);
+        return { suggestions: [], source: 'amap' };
+      }
+      const suggestions = (data.tips || [])
+        // Filter out tips without a valid location (poi-type=0 is "uncategorized" with no coords)
+        .filter((t) => t.location && t.location.includes(','))
+        .slice(0, 5)
+        .map((t) => {
+          // Build a readable secondaryText from district + address
+          const parts = [t.district, t.address].filter(Boolean);
+          return {
+            placeId: `amap:${t.id}`,
+            mainText: t.name || '',
+            secondaryText: parts.join(' '),
+          };
+        });
+      return { suggestions, source: 'amap' };
+    } catch (err) {
+      console.error('AMap inputtips autocomplete failed:', err);
+      return { suggestions: [], source: 'amap' };
+    }
+  }
+
   // ── Place details (Google or OSM) ──────────────────────────────────────────
 
   async getPlaceDetails(
@@ -1700,6 +1781,49 @@ export class MapsService {
     lang?: string,
     sessionToken?: string,
   ): Promise<{ place: Record<string, unknown> | null }> {
+    // Amap details: placeId is "amap:B0FFG33I2E" etc.
+    if (placeId.startsWith('amap:')) {
+      const amapId = placeId.slice(5); // strip "amap:" prefix
+      const _envAmapKey = process.env.AMAP_SERVICE_KEY || '';
+      const _amapKey = _envAmapKey || (this.database.get<{ value: string }>(
+        'SELECT value FROM app_settings WHERE key = ?', 'amap_service_key',
+      )?.value ?? '');
+      if (!_amapKey) return { place: null };
+      try {
+        const params = new URLSearchParams({ key: _amapKey, id: amapId, output: 'json', extensions: 'all' });
+        const response = await fetch(`https://restapi.amap.com/v3/place/detail?${params.toString()}`);
+        if (!response.ok) return { place: null };
+        const data = await response.json() as {
+          status: string;
+          pois?: Array<{
+            name: string; address: string; location: string; poiid: string;
+            pname?: string; cityname?: string; adname?: string;
+            tel?: string; website?: string; type?: string;
+          }>;
+        };
+        if (data.status !== '1' || !data.pois?.length) return { place: null };
+        const poi = data.pois[0];
+        const [lng, lat] = poi.location.split(',').map(Number);
+        const addrParts = [poi.pname, poi.cityname, poi.adname, poi.address].filter(Boolean);
+        return {
+          place: {
+            google_place_id: null, google_ftid: null,
+            osm_id: placeId,
+            name: poi.name,
+            address: [...new Set(addrParts)].join(''),
+            lat, lng,
+            rating: null,
+            website: poi.website || `https://uri.amap.com/marker?position=${lng},${lat}&name=${encodeURIComponent(poi.name)}`,
+            phone: poi.tel || null,
+            types: poi.type ? [poi.type] : [],
+            source: 'amap',
+          },
+        };
+      } catch {
+        return { place: null };
+      }
+    }
+
     // OSM details: placeId is "node:123456" or "way:123456" etc.
     if (placeId.includes(':')) {
       const [osmType, osmId] = placeId.split(':');

@@ -143,6 +143,14 @@ function seedAddons(db: Database.Database): void {
         enabled: 0,
         sort_order: 1,
       },
+      {
+        id: 'mtphotos',
+        name: 'MT Photos',
+        description: 'MT Photos self-hosted photo management',
+        icon: 'Image',
+        enabled: 0,
+        sort_order: 2,
+      },
     ];
     const insertProvider = db.prepare('INSERT OR IGNORE INTO photo_providers (id, name, description, icon, enabled, sort_order) VALUES (?, ?, ?, ?, ?, ?)');
     for (const p of providerRows) insertProvider.run(p.id, p.name, p.description, p.icon, p.enabled, p.sort_order);
@@ -155,6 +163,9 @@ function seedAddons(db: Database.Database): void {
       { provider_id: 'synologyphotos', field_key: 'synology_password', label: 'providerPassword', input_type: 'password', placeholder: 'Password', hint: null, required: 1, secret: 1, settings_key: null, payload_key: 'synology_password', sort_order: 2 },
       { provider_id: 'synologyphotos', field_key: 'synology_otp', label: 'providerOTP', input_type: 'text', placeholder: '123456', hint: null, required: 0, secret: 0, settings_key: null, payload_key: 'synology_otp', sort_order: 3 },
       { provider_id: 'synologyphotos', field_key: 'synology_skip_ssl', label: 'skipSSLVerification', input_type: 'checkbox', placeholder: null, hint: null, required: 0, secret: 0, settings_key: 'synology_skip_ssl', payload_key: 'synology_skip_ssl', sort_order: 4 },
+      { provider_id: 'mtphotos', field_key: 'mtphotos_url', label: 'providerUrl', input_type: 'url', placeholder: 'http://10.1.1.110:8063', hint: 'MT Photos server URL', required: 1, secret: 0, settings_key: 'mtphotos_url', payload_key: 'mtphotos_url', sort_order: 0 },
+      { provider_id: 'mtphotos', field_key: 'mtphotos_username', label: 'providerUsername', input_type: 'text', placeholder: 'Username', hint: null, required: 1, secret: 0, settings_key: 'mtphotos_username', payload_key: 'mtphotos_username', sort_order: 1 },
+      { provider_id: 'mtphotos', field_key: 'mtphotos_password', label: 'providerPassword', input_type: 'password', placeholder: 'Password', hint: null, required: 1, secret: 1, settings_key: null, payload_key: 'mtphotos_password', sort_order: 2 },
     ];
     const insertProviderField = db.prepare('INSERT OR IGNORE INTO photo_provider_fields (provider_id, field_key, label, input_type, placeholder, hint, required, secret, settings_key, payload_key, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
     for (const f of providerFields) {
