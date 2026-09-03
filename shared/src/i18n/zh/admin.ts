@@ -488,7 +488,7 @@ const admin: TranslationStrings = {
   'admin.addons.noAddons': '暂无可用扩展',
   'admin.weather.title': '天气数据',
   'admin.weather.badge': '自 2026 年 3 月 24 日起',
-  'admin.weather.description': 'TREK 使用 Open-Meteo 作为天气数据源。Open-Meteo 是免费的开源天气服务——无需 API 密钥。',
+  'admin.weather.description': '使用和风天气（QWeather）作为天气数据源。免费版每天 1000 次请求。',
   'admin.weather.forecast': '16 天天气预报',
   'admin.weather.forecastDesc': '之前为 5 天 (OpenWeatherMap)',
   'admin.weather.climate': '历史气候数据',
