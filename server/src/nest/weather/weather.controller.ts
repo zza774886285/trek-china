@@ -34,7 +34,7 @@ export class WeatherController {
       throw new HttpException({ error: 'Latitude and longitude are required' }, 400);
     }
     try {
-      return await this.weather.get(lat, lng, date, lang ?? 'de', time);
+      return await this.weather.get(lat, lng, date, lang ?? 'zh', time);
     } catch (err: unknown) {
       throw toHttp(err, 'Weather error:', 'Error fetching weather data');
     }
@@ -51,7 +51,7 @@ export class WeatherController {
       throw new HttpException({ error: 'Latitude, longitude, and date are required' }, 400);
     }
     try {
-      return await this.weather.getDetailed(lat, lng, date, lang ?? 'de');
+      return await this.weather.getDetailed(lat, lng, date, lang ?? 'zh');
     } catch (err: unknown) {
       throw toHttp(err, 'Detailed weather error:', 'Error fetching detailed weather data');
     }
