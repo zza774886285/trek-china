@@ -165,8 +165,8 @@ function seedExampleTrips(db: Database.Database, adminId: number, demoId: number
 
   insertMember.run(t1, demoId, adminId);
 
-  // --- Trip 2: Barcelona Long Weekend ---
-  const trip2 = insertTrip.run(adminId, 'Barcelona Long Weekend', 'Gaudi, tapas, and Mediterranean vibes — a long weekend in the Catalan capital.', '2026-05-21', '2026-05-24', 'EUR');
+  // --- Trip 2: 成都美食之旅 ---
+  const trip2 = insertTrip.run(adminId, '成都美食之旅', '火锅、串串、宽窄巷子——在成都享受悠闲的美食与文化之旅。', '2026-05-21', '2026-05-24', 'CNY');
   const t2 = Number(trip2.lastInsertRowid);
 
   const t2days: number[] = [];
@@ -176,51 +176,51 @@ function seedExampleTrips(db: Database.Database, adminId: number, demoId: number
   }
 
   const t2places: [number, string, number, number, string, number, string, number, string, string | null, string | null, string | null, string | null][] = [
-    [t2, 'W Barcelona', 41.3686, 2.1920, 'Placa de la Rosa dels Vents 1, 08039 Barcelona, Spain', 1, '14:00', 60, 'Right on the beach. Rooftop bar with panoramic views!', null, 'ChIJKfj5C8yjpBIRCPC3RPI0JO4', 'https://www.marriott.com/hotels/travel/bcnwh-w-barcelona/', '+34 932 95 28 00'],
-    [t2, 'Sagrada Familia', 41.4036, 2.1744, 'C/ de Mallorca, 401, 08013 Barcelona, Spain', 3, '10:00', 120, 'Gaudi\'s masterpiece. Book tickets online in advance — sells out fast!', null, 'ChIJk_s92NyipBIRUMnDG8Kq2Js', 'https://sagradafamilia.org/', '+34 932 08 04 14'],
-    [t2, 'Park Guell', 41.4145, 2.1527, '08024 Barcelona, Spain', 3, '09:00', 90, 'Mosaic terrace with city views. Book early for the Monumental Zone.', null, 'ChIJ4eQMeOmipBIRb65JRUzGE8k', 'https://parkguell.barcelona/', '+34 934 09 18 31'],
-    [t2, 'La Boqueria Market', 41.3816, 2.1717, 'La Rambla, 91, 08001 Barcelona, Spain', 2, '12:00', 75, 'Famous market on La Rambla. Fresh juice, jamon iberico, and seafood!', null, 'ChIJB_RfKcuipBIRkPKW7MzVGKg', 'http://www.boqueria.barcelona/', '+34 933 18 25 84'],
-    [t2, 'Barceloneta Beach', 41.3784, 2.1925, 'Passeig Maritim de la Barceloneta, 08003 Barcelona, Spain', 8, '16:00', 120, 'City beach to unwind after sightseeing. Great chiringuitos nearby.', null, 'ChIJAQCl79-ipBIRUKF3myrMYkM', null, null],
-    [t2, 'Gothic Quarter', 41.3834, 2.1762, 'Barri Gotic, 08002 Barcelona, Spain', 3, '15:00', 90, 'Medieval lanes, the cathedral, and Placa Reial. Get lost in the alleys!', null, 'ChIJ4_xkvv2ipBIRrK3bdd-lHgo', null, null],
-    [t2, 'Casa Batllo', 41.3916, 2.1650, 'Passeig de Gracia, 43, 08007 Barcelona, Spain', 3, '11:00', 75, 'Gaudi\'s dragon house. The facade alone is worth the visit.', null, 'ChIJ-2VKIcaipBIRKK63H5PYjqQ', 'https://www.casabatllo.es/', '+34 932 16 03 06'],
-    [t2, 'El Born & Tapas', 41.3856, 2.1825, 'El Born, 08003 Barcelona, Spain', 7, '20:00', 120, 'Trendy neighborhood with the best tapas bars. Try Cal Pep or El Xampanyet!', null, 'ChIJNY56dxuipBIRbqjSczmLvIA', null, null],
+    [t2, '成都香格里拉大酒店', 30.6321, 104.0790, '成都市锦江区滨江东路339号', 1, '14:00', 60, '入住时间下午三点，毗邻春熙路步行街。', null, null, 'https://www.shangri-la.com/chengdu/shangrila/', '028-8888-9999'],
+    [t2, '宽窄巷子', 30.6713, 104.0573, '成都市青羊区宽窄巷子', 3, '10:00', 120, '成都最具代表性的历史文化街区，品尝三大炮、糖油果子等小吃。', null, null, null, null],
+    [t2, '锦里古街', 30.6530, 104.0491, '成都市武侯区锦里西街', 3, '15:00', 90, '紧邻武侯祠，体验三国文化。夜晚灯笼亮起特别漂亮。', null, null, null, null],
+    [t2, '陈麻婆豆腐（总店）', 30.6550, 104.0550, '成都市青羊区西玉龙街197号', 2, '12:00', 60, '百年老店，正宗麻婆豆腐的发源地。', null, null, 'http://www.chen-mapo.com/', null],
+    [t2, '人民公园', 30.6612, 104.0631, '成都市青羊区少城路12号', 9, '10:00', 90, '在鹤鸣茶社喝一碗盖碗茶，体验成都慢生活。', null, null, null, null],
+    [t2, '武侯祠', 30.6456, 104.0491, '成都市武侯区武侯祠大街231号', 3, '09:00', 90, '中国唯一的君臣合祀祠庙，纪念诸葛亮和刘备。', null, null, 'http://www.wuhouci.org.cn/', '028-8555-2395'],
+    [t2, '成都大熊猫繁育研究基地', 30.7325, 104.1445, '成都市成华区熊猫大道1375号', 3, '08:00', 180, '建议早上八点入园，上午是熊猫最活跃的时间。', null, null, 'http://www.panda.org.cn/', '028-8351-0000'],
+    [t2, '建设路小吃街', 30.6650, 104.1120, '成都市成华区建设巷', 7, '20:00', 120, '本地人最爱的小吃街，降龙爪爪、高姐锡纸烤脑花都值得尝。', null, null, null, null],
   ];
 
   const t2pIds = t2places.map(p => Number(insertPlace.run(...p).lastInsertRowid));
 
-  // Day 1: Arrival, Beach, El Born
+  // Day 1: 到达，人民公园，建设路
   insertAssignment.run(t2days[0], t2pIds[0], 0);
   insertAssignment.run(t2days[0], t2pIds[4], 1);
   insertAssignment.run(t2days[0], t2pIds[7], 2);
-  // Day 2: Sagrada Familia, Casa Batllo, La Boqueria
-  insertAssignment.run(t2days[1], t2pIds[1], 0);
-  insertAssignment.run(t2days[1], t2pIds[6], 1);
-  insertAssignment.run(t2days[1], t2pIds[3], 2);
-  insertNote.run(t2days[1], t2, 'Tickets already booked for 10:00 AM slot', '09:30', 'Ticket', 0.5);
-  // Day 3: Park Guell, Gothic Quarter
-  insertAssignment.run(t2days[2], t2pIds[2], 0);
-  insertAssignment.run(t2days[2], t2pIds[5], 1);
-  // Day 4: Beach morning, departure
-  insertAssignment.run(t2days[3], t2pIds[4], 0);
-  insertNote.run(t2days[3], t2, 'Flight departs at 18:30 — leave hotel by 15:00', '14:00', 'Plane', 1);
+  // Day 2: 熊猫基地，陈麻婆豆腐，宽窄巷子
+  insertAssignment.run(t2days[1], t2pIds[6], 0);
+  insertAssignment.run(t2days[1], t2pIds[3], 1);
+  insertAssignment.run(t2days[1], t2pIds[1], 2);
+  insertNote.run(t2days[1], t2, '门票需要提前在公众号预约', '08:00', 'Ticket', 0.5);
+  // Day 3: 武侯祠，锦里
+  insertAssignment.run(t2days[2], t2pIds[5], 0);
+  insertAssignment.run(t2days[2], t2pIds[2], 1);
+  // Day 4: 宽窄巷子闲逛，返程
+  insertAssignment.run(t2days[3], t2pIds[1], 0);
+  insertNote.run(t2days[3], t2, '下午的航班，上午还能逛逛春熙路', '13:00', 'Plane', 1);
 
   // Packing
-  ['Passport', 'Sunscreen SPF50', 'Swimwear', 'Sunglasses', 'Comfortable sandals', 'Beach towel'].forEach((name, i) => {
-    insertPacking.run(t2, name, 0, i < 1 ? 'Documents' : 'Summer', i);
+  ['身份证', '防晒霜', '舒适的步行鞋', '充电宝', '相机', '遮阳帽'].forEach((name, i) => {
+    insertPacking.run(t2, name, 0, i < 1 ? '证件' : '其他', i);
   });
 
   // Budget
-  insertBudget.run(t2, 'Accommodation', 'W Barcelona (3 nights)', 780, 2, 'Sea View Room');
-  insertBudget.run(t2, 'Transport', 'Flights BER-BCN return', 180, 2, 'Eurowings');
-  insertBudget.run(t2, 'Food', 'Restaurants & tapas', 300, 2, 'Approx. 75 EUR/day');
-  insertBudget.run(t2, 'Activities', 'Sagrada Familia + Park Guell + Casa Batllo', 95, 2, 'Online tickets');
+  insertBudget.run(t2, '住宿', '成都香格里拉大酒店（3晚）', 2700, 2, '豪华大床房');
+  insertBudget.run(t2, '交通', '机票往返', 1600, 2, '经济舱');
+  insertBudget.run(t2, '餐饮', '餐饮美食', 1200, 2, '约400元/天');
+  insertBudget.run(t2, '活动', '熊猫基地门票 + 武侯祠门票', 200, 2, '线上购票');
 
-  insertReservation.run(t2, t2days[1], 'Sagrada Familia Entry', '2026-05-22T10:00', 'SF-2026-11234', 'confirmed', 'activity', 'Eixample, Barcelona');
+  insertReservation.run(t2, t2days[0], '成都香格里拉大酒店入住', '2026-05-21T15:00', 'SH-2026-78432', 'confirmed', 'hotel', '成都市锦江区');
 
   insertMember.run(t2, demoId, adminId);
 
-  // --- Trip 3: New York City ---
-  const trip3 = insertTrip.run(adminId, 'New York City', 'The city that never sleeps — iconic landmarks, world-class food, and Broadway lights.', '2026-09-18', '2026-09-22', 'USD');
+  // --- Trip 3: 杭州西湖之旅 ---
+  const trip3 = insertTrip.run(adminId, '杭州西湖之旅', '欲把西湖比西子，淡妆浓抹总相宜——在杭州感受江南水乡的诗情画意。', '2026-09-18', '2026-09-22', 'CNY');
   const t3 = Number(trip3.lastInsertRowid);
 
   const t3days: number[] = [];
@@ -230,60 +230,59 @@ function seedExampleTrips(db: Database.Database, adminId: number, demoId: number
   }
 
   const t3places: [number, string, number, number, string, number, string, number, string, string | null, string | null, string | null, string | null][] = [
-    [t3, 'The Plaza Hotel', 40.7645, -73.9744, '768 5th Ave, New York, NY 10019, USA', 1, '15:00', 60, 'Iconic luxury hotel on Central Park. The lobby alone is worth a visit.', null, 'ChIJYbISlAVYwokRn6ORbSPV0xk', 'https://www.theplazany.com/', '+1 212-759-3000'],
-    [t3, 'Statue of Liberty', 40.6892, -74.0445, 'Liberty Island, New York, NY 10004, USA', 3, '09:00', 180, 'Book crown access tickets months in advance. Ferry from Battery Park.', null, 'ChIJPTacEpBQwokRKwIlDXelxkA', 'https://www.nps.gov/stli/', '+1 212-363-3200'],
-    [t3, 'Central Park', 40.7829, -73.9654, 'Central Park, New York, NY 10024, USA', 9, '10:00', 120, 'Bethesda Fountain, Bow Bridge, and Strawberry Fields. Rent bikes!', null, 'ChIJ4zGFAZpYwokRGUGph3Mf37k', 'https://www.centralparknyc.org/', null],
-    [t3, 'Times Square', 40.7580, -73.9855, 'Manhattan, NY 10036, USA', 3, '19:00', 60, 'The crossroads of the world. Best experienced at night with all the lights.', null, 'ChIJmQJIxlVYwokRLgeuocVOGVU', 'https://www.timessquarenyc.org/', null],
-    [t3, 'Empire State Building', 40.7484, -73.9857, '350 5th Ave, New York, NY 10118, USA', 3, '11:00', 90, '86th floor observation deck. Go at sunset for the best views.', null, 'ChIJaXQRs6lZwokRY6EFpJnhNNE', 'https://www.esbnyc.com/', '+1 212-736-3100'],
-    [t3, 'Brooklyn Bridge', 40.7061, -73.9969, 'Brooklyn Bridge, New York, NY 10038, USA', 3, '16:00', 75, 'Walk from Manhattan to Brooklyn. DUMBO has great pizza and views.', null, 'ChIJK3vOQyNawokRXEYwET2GUtY', null, null],
-    [t3, 'The Metropolitan Museum of Art', 40.7794, -73.9632, '1000 5th Ave, New York, NY 10028, USA', 3, '10:00', 180, 'One of the world\'s greatest art museums. Could spend days here.', null, 'ChIJb8Jg766MwokR1YWG0nV7k-E', 'https://www.metmuseum.org/', '+1 212-535-7710'],
-    [t3, 'Joe\'s Pizza', 40.7309, -73.9969, '7 Carmine St, New York, NY 10014, USA', 2, '13:00', 30, 'New York\'s most famous pizza slice. Cash only, always a line, always worth it.', null, 'ChIJrfCL1IZZwokRwO3NKN22ZBc', 'http://www.joespizzanyc.com/', '+1 212-366-1182'],
-    [t3, 'Top of the Rock', 40.7593, -73.9794, '30 Rockefeller Plaza, New York, NY 10112, USA', 3, '17:30', 60, 'Better views than Empire State because you can SEE the Empire State.', null, 'ChIJ_y2Fb1JYwokRT_iGzhTLdBo', 'https://www.topoftherocknyc.com/', '+1 212-698-2000'],
-    [t3, 'Chelsea Market', 40.7424, -74.0061, '75 9th Ave, New York, NY 10011, USA', 2, '12:00', 90, 'Food hall in a converted factory. Lobster rolls, tacos, doughnuts, and more.', null, 'ChIJw2FNFyZZwokRcP9th_vIbkE', 'https://www.chelseamarket.com/', null],
-    [t3, 'Broadway Show', 40.7590, -73.9845, 'Broadway, Manhattan, NY 10019, USA', 6, '20:00', 150, 'Can\'t visit NYC without seeing a show. Book TKTS booth for discounts.', null, 'ChIJMYQhxFtYwokR7cJBcNqfKDY', null, null],
+    [t3, '杭州西湖国宾馆', 30.2530, 120.1340, '杭州市西湖区杨公堤18号', 1, '15:00', 60, '坐落在西湖边，拥有无敌湖景。环境清幽雅致。', null, null, 'http://www.xihuhotel.com/', '0571-8797-9889'],
+    [t3, '西湖', 30.2420, 120.1480, '杭州市西湖区', 9, '09:00', 180, '苏堤春晓、断桥残雪、三潭印月——十景各有千秋。建议骑行环湖。', null, null, null, null],
+    [t3, '灵隐寺', 30.2410, 120.1010, '杭州市西湖区法云弄1号', 3, '08:00', 120, '杭州最著名的古刹，千年古刹香火旺盛。先买飞来峰景区门票。', null, null, 'http://www.lingyin.net/', '0571-8796-8665'],
+    [t3, '楼外楼（孤山路店）', 30.2620, 120.1390, '杭州市西湖区孤山路30号', 2, '12:00', 90, '百年老字号，必点西湖醋鱼、龙井虾仁、东坡肉。', null, null, null, null],
+    [t3, '河坊街', 30.2440, 120.1700, '杭州市上城区河坊街', 3, '15:00', 90, '清河坊历史文化街区，品尝定胜糕、葱包桧、片儿川。', null, null, null, null],
+    [t3, '千岛湖', 29.6042, 119.0155, '杭州市淳安县千岛湖镇', 9, '07:00', 480, '千岛碧水画中游，建议报一日游或自驾。五小时车程。', null, null, null, null],
+    [t3, '龙井村', 30.2130, 120.1280, '杭州市西湖区龙井村', 3, '10:00', 90, '中国十大名茶之首的产地，品尝新炒的龙井茶。', null, null, null, null],
+    [t3, '南宋御街', 30.2500, 120.1710, '杭州市上城区中山中路', 3, '14:00', 60, '南宋时期御用街道，感受宋韵文化的魅力。', null, null, null, null],
+    [t3, '知味观（总店）', 30.2530, 120.1650, '杭州市上城区仁和路83号', 2, '18:00', 60, '杭州最著名的老字号小吃店，必点小笼包、猫耳朵、幸福双。', null, null, null, null],
+    [t3, '京杭大运河（拱宸桥段）', 30.3200, 120.1420, '杭州市拱墅区拱宸桥', 3, '16:00', 90, '世界文化遗产，沿运河步道散步，看老杭州的生活气息。', null, null, null, null],
   ];
 
   const t3pIds = t3places.map(p => Number(insertPlace.run(...p).lastInsertRowid));
 
-  // Day 1: Arrival, Times Square, Broadway
+  // Day 1: 到达，西湖夜游
   insertAssignment.run(t3days[0], t3pIds[0], 0);
-  insertAssignment.run(t3days[0], t3pIds[3], 1);
-  insertAssignment.run(t3days[0], t3pIds[10], 2);
-  // Day 2: Statue of Liberty, Brooklyn Bridge, Joe's Pizza
-  insertAssignment.run(t3days[1], t3pIds[1], 0);
-  insertAssignment.run(t3days[1], t3pIds[5], 1);
-  insertAssignment.run(t3days[1], t3pIds[7], 2);
-  insertNote.run(t3days[1], t3, 'First ferry at 8:30 AM — arrive early at Battery Park', '08:00', 'Ship', 0.5);
-  // Day 3: Central Park, Met Museum, Top of the Rock sunset
-  insertAssignment.run(t3days[2], t3pIds[2], 0);
-  insertAssignment.run(t3days[2], t3pIds[6], 1);
-  insertAssignment.run(t3days[2], t3pIds[8], 2);
-  // Day 4: Empire State Building, Chelsea Market, shopping
-  insertAssignment.run(t3days[3], t3pIds[4], 0);
-  insertAssignment.run(t3days[3], t3pIds[9], 1);
-  insertNote.run(t3days[3], t3, 'SoHo and 5th Avenue shopping in the afternoon', '14:00', 'ShoppingBag', 1.5);
-  // Day 5: Free morning, departure
-  insertNote.run(t3days[4], t3, 'Flight departs JFK at 17:00 — last bagel at Russ & Daughters!', '10:00', 'Plane', 0);
+  insertAssignment.run(t3days[0], t3pIds[1], 1);
+  insertAssignment.run(t3days[0], t3pIds[8], 2);
+  // Day 2: 灵隐寺，龙井村，知味观
+  insertAssignment.run(t3days[1], t3pIds[2], 0);
+  insertAssignment.run(t3days[1], t3pIds[6], 1);
+  insertAssignment.run(t3days[1], t3pIds[8], 2);
+  insertNote.run(t3days[1], t3, '灵隐寺建议早上八点前到达，避开人流', '07:30', 'MapPin', 0.5);
+  // Day 3: 西湖环湖骑行，楼外楼午餐
+  insertAssignment.run(t3days[2], t3pIds[1], 0);
+  insertAssignment.run(t3days[2], t3pIds[3], 1);
+  insertNote.run(t3days[2], t3, '租自行车环湖，记得带好防晒', '09:00', 'Bike', 1);
+  // Day 4: 千岛湖一日游
+  insertAssignment.run(t3days[3], t3pIds[5], 0);
+  insertNote.run(t3days[3], t3, '建议报一日游，早上六点半出发', '06:30', 'Car', 2);
+  // Day 5: 河坊街，南宋御街，返程
+  insertAssignment.run(t3days[4], t3pIds[4], 0);
+  insertAssignment.run(t3days[4], t3pIds[7], 1);
+  insertNote.run(t3days[4], t3, '下午的高铁，上午买些伴手礼', '13:00', 'Train', 0);
 
   // Packing
   const t3packing: [string, number, string, number][] = [
-    ['Passport', 1, 'Documents', 0], ['ESTA confirmation', 1, 'Documents', 1],
-    ['Travel insurance', 0, 'Documents', 2], ['Comfortable sneakers', 0, 'Clothing', 3],
-    ['Light jacket', 0, 'Clothing', 4], ['Portable charger', 0, 'Electronics', 5],
-    ['Camera', 0, 'Electronics', 6], ['Subway card (OMNY)', 0, 'Transport', 7],
+    ['身份证', 1, '证件', 0], ['学生证', 1, '证件', 1],
+    ['防晒霜', 0, '日用', 2], ['舒适的步行鞋', 0, '服装', 3],
+    ['轻便外套', 0, '服装', 4], ['充电宝', 0, '电子', 5],
+    ['相机', 0, '电子', 6], ['雨伞', 0, '日用', 7],
   ];
   t3packing.forEach(p => insertPacking.run(t3, ...p));
 
   // Budget
-  insertBudget.run(t3, 'Accommodation', 'The Plaza Hotel (4 nights)', 2400, 2, 'Park View Room');
-  insertBudget.run(t3, 'Transport', 'Flights FRA-JFK return', 850, 2, 'United Airlines');
-  insertBudget.run(t3, 'Food', 'Daily food budget', 500, 2, 'Approx. 100 USD/day');
-  insertBudget.run(t3, 'Activities', 'Statue of Liberty + Empire State + Top of the Rock + Met', 180, 2, 'CityPASS');
-  insertBudget.run(t3, 'Entertainment', 'Broadway show tickets', 300, 2, 'Hamilton or Wicked');
+  insertBudget.run(t3, '住宿', '杭州西湖国宾馆（4晚）', 4800, 2, '湖景大床房');
+  insertBudget.run(t3, '交通', '高铁往返', 1200, 2, '二等座');
+  insertBudget.run(t3, '餐饮', '餐饮美食', 2000, 2, '约400元/天');
+  insertBudget.run(t3, '活动', '灵隐寺 + 千岛湖一日游 + 其他', 600, 2, '门票及导览');
+  insertBudget.run(t3, '购物', '龙井茶及伴手礼', 500, 2, '特产');
 
-  insertReservation.run(t3, t3days[0], 'The Plaza Hotel Check-in', '2026-09-18T15:00', 'PZ-2026-55891', 'confirmed', 'hotel', '768 5th Ave, New York');
-  insertReservation.run(t3, t3days[0], 'Broadway Show', '2026-09-18T20:00', 'BW-HAM-2026-1192', 'pending', 'activity', 'Richard Rodgers Theatre');
-  insertReservation.run(t3, t3days[1], 'Statue of Liberty Ferry', '2026-09-19T08:30', 'SOL-2026-3347', 'confirmed', 'transport', 'Battery Park');
+  insertReservation.run(t3, t3days[0], '杭州西湖国宾馆入住', '2026-09-18T15:00', 'XH-2026-55891', 'confirmed', 'hotel', '杭州市西湖区杨公堤18号');
+  insertReservation.run(t3, t3days[3], '千岛湖一日游', '2026-09-21T06:30', 'QDH-2026-3347', 'confirmed', 'transport', '酒店出发');
 
   insertMember.run(t3, demoId, adminId);
 

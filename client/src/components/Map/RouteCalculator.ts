@@ -138,10 +138,10 @@ export function generateGoogleMapsUrl(places: Waypoint[]): string | null {
   const valid = places.filter((p) => p.lat && p.lng)
   if (valid.length === 0) return null
   if (valid.length === 1) {
-    return `https://www.google.com/maps/search/?api=1&query=${valid[0].lat},${valid[0].lng}`
+    return `https://uri.amap.com/marker?position=${valid[0].lng},${valid[0].lat}&name=`
   }
-  const stops = valid.map((p) => `${p.lat},${p.lng}`).join('/')
-  return `https://www.google.com/maps/dir/${stops}`
+  const stops = valid
+  return `https://uri.amap.com/marker?position=${stops[stops.length - 1].lng},${stops[stops.length - 1].lat}&name=`
 }
 
 /** A stop that can carry its name into a deep link that has somewhere to put one. */
