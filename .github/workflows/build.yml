@@ -1,4 +1,4 @@
-name: Build & Verify
+name: Build Docker Image
 
 on:
   push:
@@ -29,20 +29,18 @@ jobs:
       - name: Build client
         run: npm run build --workspace=client
 
-      - name: Verify artifacts exist
-        run: |
-          test -d shared/dist || (echo "shared/dist missing" && exit 1)
-          test -d server/dist || (echo "server/dist missing" && exit 1)
-          test -d client/dist || (echo "client/dist missing" && exit 1)
-          echo "All build artifacts present ✓"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Package dist
-        run: |
-          tar czf trek-china-dist.tar.gz shared/dist/ server/dist/ server/package.json client/dist/ client/public/
+      - name: Build Docker image
+        run: docker build -t trek-china:latest -f Dockerfile.china .
+
+      - name: Save image
+        run: docker save trek-china:latest | gzip > trek-china.tar.gz
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: trek-china-dist
-          path: trek-china-dist.tar.gz
+          name: trek-china
+          path: trek-china.tar.gz
           retention-days: 3
