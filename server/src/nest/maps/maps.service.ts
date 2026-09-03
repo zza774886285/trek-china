@@ -1524,18 +1524,18 @@ export class MapsService {
     locationBias?: { lat: number; lng: number; radius?: number },
     city?: string,
   ): Promise<{ places: Record<string, unknown>[]; source: string }> {
-    // ── POI 搜索源路由：用户设置 poi_search_source 控制 ──
-    const _poiRow = this.database.get<{ value: string }>(
+    // ── POI 搜索源路由：环境变量 > 数据库 app_settings ──
+    const _envPoiSource = process.env.POI_SEARCH_SOURCE || '';
+    const _envAmapKey = process.env.AMAP_SERVICE_KEY || '';
+    const _poiSource = _envPoiSource || (this.database.get<{ value: string }>(
       'SELECT value FROM app_settings WHERE key = ?', 'poi_search_source'
-    );
-    if (_poiRow?.value === 'amap') {
-      const _amapRow = this.database.get<{ value: string }>(
-        'SELECT value FROM app_settings WHERE key = ?', 'amap_api_key'
-      );
-      if (_amapRow?.value && _amapRow.value.trim()) {
-        const _svcRow = this.database.get<{ value: string }>('SELECT value FROM app_settings WHERE key = ?', 'amap_service_key');
-        const _svcKey = _svcRow?.value && _svcRow.value.trim() ? _svcRow.value.trim() : _amapRow.value.trim();
-        return await this.searchAmapPoi(_svcKey, query, lang, locationBias, city);
+    )?.value ?? '');
+    if (_poiSource === 'amap') {
+      const _amapKey = _envAmapKey || (this.database.get<{ value: string }>(
+        'SELECT value FROM app_settings WHERE key = ?', 'amap_service_key'
+      )?.value ?? '');
+      if (_amapKey && _amapKey.trim()) {
+        return await this.searchAmapPoi(_amapKey.trim(), query, lang, locationBias, city);
       }
     }
     const { key: apiKey, source: keySource } = this.resolveMapsKey(userId);
