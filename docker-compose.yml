@@ -24,6 +24,7 @@ services:
       - TZ=${TZ:-Asia/Shanghai}
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - DEFAULT_LANGUAGE=zh
+      - QWEATHER_KEY=${QWEATHER_KEY}
       - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-}
     volumes:
       - trek-data:/app/data

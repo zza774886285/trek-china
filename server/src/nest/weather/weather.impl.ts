@@ -5,7 +5,7 @@ const MAX_WEATHER_BYTES = 1024 * 1024;
 
 // ── QWeather (和风天气) config ──────────────────────────────────────────
 const QWEATHER_API = 'https://devapi.qweather.com';
-const QWEATHER_KEY = process.env.QWEATHER_KEY || '669e5aa0a3064bd581b1e4454c2a0703';
+const QWEATHER_KEY = process.env.QWEATHER_KEY || '';
 
 // ── Interfaces ──────────────────────────────────────────────────────────
 
